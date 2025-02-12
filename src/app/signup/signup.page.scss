@@ -1,0 +1,54 @@
+ion-content {
+  --background: linear-gradient(135deg, #ff6a00, #ee0979); // Vibrant gradient background
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.glass-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+ion-item {
+  --background: rgba(255, 255, 255, 0.1);
+  --border-radius: 10px;
+  --border-color: rgba(255, 255, 255, 0.3);
+  --color: #ffffff;
+  margin-bottom: 12px;
+}
+
+ion-label {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+ion-input,
+ion-textarea {
+  color: #ffffff;
+}
+
+ion-button {
+  margin-top: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-transform: capitalize;
+}
+
+.google-btn {
+  --background: white;
+  --color: black;
+  font-weight: bold;
+}
+
+.google-btn:hover {
+  --background: #f0f0f0;
+}
