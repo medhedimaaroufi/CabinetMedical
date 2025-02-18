@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { NotificationComponent } from './notification/notification.component';
+import {SigninComponent} from "./signin/signin.component";
 
 const routes: Routes = [
   {
@@ -13,10 +13,15 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: '',
-    redirectTo: 'NotificationComponent',
+    path: 'signin',
+    component: SigninComponent,
     pathMatch: 'full'
   },
+  {
+    path: 'notification',
+    loadChildren: () => import('./notification/notification.module').then( m => m.NotificationPageModule)
+  },
+
 ];
 
 @NgModule({
