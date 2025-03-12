@@ -1,0 +1,170 @@
+.cover-photo {
+  width: 100%;
+  height: 150px;
+  background-image: url('/assets/cover.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  margin-top: -50px;
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  background-color: #6200ea;
+  color: white;
+  font-size: 36px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid white;
+  text-transform: uppercase;
+}
+
+.profile-info {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+
+.calendar-container {
+  padding: 20px;
+
+  p {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  ion-list {
+    background: transparent;
+  }
+
+  .calendar-date {
+    --background: #f4f5f8;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 5px;
+
+    h2 {
+      font-size: 1.2rem;
+    }
+  }
+
+  .calendar-event {
+    margin: 5px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --padding-start: 15px;
+    --padding-end: 15px;
+
+    ion-label {
+      p {
+        margin: 2px 0;
+        font-size: 0.9rem;
+        color: #333;
+      }
+    }
+
+    &.status-en-attente {
+      --background: #fff3cd;
+      border-left: 5px solid #ffca2c;
+    }
+
+    &.status-annulé {
+      --background: #f8d7da;
+      border-left: 5px solid #dc3545;
+    }
+
+    &.status-confirmé {
+      --background: #d4edda;
+      border-left: 5px solid #28a745;
+    }
+  }
+}
+
+// Ensure proper display of ion-items
+ion-item {
+  --background: transparent;
+}
+// Calendar container
+.calendar-container {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  margin: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+  .calendar-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4a90e2;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  ion-list {
+    background: transparent;
+  }
+
+  .calendar-date {
+    --background: transparent;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 10px;
+    padding: 10px 0;
+  }
+
+  .calendar-event {
+    margin: 10px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --padding-start: 15px;
+    --padding-end: 15px;
+    background: #ffffff;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    ion-label {
+      p {
+        margin: 5px 0;
+        font-size: 1rem;
+        color: #333;
+        line-height: 1.5;
+      }
+    }
+
+    &.status-en-attente {
+      --background: #fff3cd;
+      border-left: 6px solid #ffca2c;
+    }
+
+    &.status-annulé {
+      --background: #f8d7da;
+      border-left: 6px solid #dc3545;
+    }
+
+    &.status-confirmé, &.status-scheduled {
+      --background: #d4edda;
+      border-left: 6px solid #28a745;
+    }
+  }
+
+  .no-appointments {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    font-size: 1rem;
+    padding: 20px 0;
+  }
+}
+

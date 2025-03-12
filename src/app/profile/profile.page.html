@@ -1,0 +1,92 @@
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/home" text=""></ion-back-button>
+      </ion-buttons>
+      <ion-title size="medium">Profile</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <!-- Photo de couverture -->
+  <div class="cover-photo"></div>
+  <!-- Photo de profil -->
+  <div class="profile-container">
+    <div class="profile-pic">
+      {{ initials }}
+    </div>
+  </div>
+  <!-- Informations personnelles -->
+  <div class="profile-info">
+    <p class="name">{{ name }}</p>
+    <p class="role" *ngIf="role === 'doctor'">Doctor</p>
+    <p class="role" *ngIf="role === 'patient'">Patient</p>
+  </div>
+  <!-- Upcoming Appointments -->
+  <div class="calendar-container">
+    <p class="calendar-title">Calendrier des rendez-vous</p>
+    <ion-list>
+      <ng-container *ngIf="upcomingAppointments.length > 0; else noUpcoming">
+        <ng-container *ngFor="let appointment of upcomingAppointments">
+          <ion-item class="calendar-date" lines="none">
+            <ion-label>
+              <h2>{{ getDate(appointment.dateTime) }}</h2>
+            </ion-label>
+          </ion-item>
+          <ion-item class="calendar-event" [ngClass]="getStatusClass(appointment.status)">
+            <ion-label>
+              <p *ngIf="role === 'patient'">
+                Doctor: {{ appointment.doctor_name }}<br>
+                Time: {{ getTime(appointment.dateTime) }}<br>
+                Status: {{ appointment.status }}
+              </p>
+              <p *ngIf="role === 'doctor'">
+                Patient: {{ appointment.patient_name }}<br>
+                Time: {{ getTime(appointment.dateTime) }}<br>
+                Status: {{ appointment.status }}
+              </p>
+            </ion-label>
+          </ion-item>
+        </ng-container>
+      </ng-container>
+      <ng-template #noUpcoming>
+        <ion-item lines="none">
+          <ion-label class="no-appointments">Aucun rendez-vous à venir</ion-label>
+        </ion-item>
+      </ng-template>
+    </ion-list>
+  </div>
+  <!-- Old Appointments -->
+  <div class="calendar-container">
+    <p class="calendar-title">Anciens rendez-vous</p>
+    <ion-list>
+      <ng-container *ngIf="oldAppointments.length > 0; else noOld">
+        <ng-container *ngFor="let appointment of oldAppointments">
+          <ion-item class="calendar-date" lines="none">
+            <ion-label>
+              <h2>{{ getDate(appointment.dateTime) }}</h2>
+            </ion-label>
+          </ion-item>
+          <ion-item class="calendar-event" [ngClass]="getStatusClass(appointment.status)">
+            <ion-label>
+              <p *ngIf="role === 'patient'">
+                Doctor: {{ appointment.doctor_name }}<br>
+                Time: {{ getTime(appointment.dateTime) }}<br>
+                Status: {{ appointment.status }}
+              </p>
+              <p *ngIf="role === 'doctor'">
+                Patient: {{ appointment.patient_name }}<br>
+                Time: {{ getTime(appointment.dateTime) }}<br>
+                Status: {{ appointment.status }}
+              </p>
+            </ion-label>
+          </ion-item>
+        </ng-container>
+      </ng-container>
+      <ng-template #noOld>
+        <ion-item lines="none">
+          <ion-label class="no-appointments">Aucun ancien rendez-vous</ion-label>
+        </ion-item>
+      </ng-template>
+    </ion-list>
+  </div>
+</ion-content>
