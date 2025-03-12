@@ -1,0 +1,175 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, tap, throwError } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { CookieService } from 'ngx-cookie-service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  private readonly backendUrl = environment.backendUrl;
+
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
+
+  /**
+   * Register a new patient.
+   * Corresponds to Utilisateur.register() and Patient-specific registration in the backend.
+   *
+   * @param name The patient's full name
+   * @param email The patient's email address
+   * @param phone The patient's phone number
+   * @param dob The patient's date of birth (YYYY-MM-DD)
+   * @param password The patient's password
+   * @param address
+   * @returns Observable with the registration response
+   */
+  registerPatient(name: string, email: string, phone: string, dob: string, password: string, address: string): Observable<any> {
+    return this.http.post(`${this.backendUrl}/api/auth/register`, {
+      name,
+      email,
+      phone,
+      dob,
+      password,
+      address,
+      role: 'patient'  // Explicitly specify patient role for backend
+    }).pipe(
+      tap((response: any) => {
+        if (response.token && response.id && response.email) {
+          this.handleAuthResponse(response);
+        }
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Register a new doctor (pending approval by the static admin).
+   * Corresponds to Utilisateur.register() and Docteur-specific registration in the backend.
+   *
+   * @param name The doctor's full name
+   * @param email The doctor's email address
+   * @param phone The doctor's phone number
+   * @param dob The doctor's date of birth (YYYY-MM-DD)
+   * @param password The doctor's password
+   * @returns Observable with the registration response
+   */
+  registerDoctor(name: string, email: string, phone: string, dob: string, password: string, address: string): Observable<any> {
+    return this.http.post(`${this.backendUrl}/api/auth/register`, {
+      name,
+      email,
+      phone,
+      dob,
+      password,
+      address,
+      role: 'doctor'  // Explicitly specify doctor role for backend
+    }).pipe(
+      tap((response: any) => {
+        if (response.ok) {
+          console.log('Registration successful:', response);
+        }
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Log in a user (patient, doctor, or admin).
+   * Corresponds to Utilisateur.authenticate() in the backend.
+   *
+   * @param email The user's email address
+   * @param password The user's password
+   * @returns Observable with the login response
+   */
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.backendUrl}/api/auth/login`, {
+      email,
+      password
+    }).pipe(
+      tap((response: any) => {
+        if (response.token && response.id && response.email) {
+          this.handleAuthResponse(response);
+        }
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Log out the current user.
+   * Corresponds to Utilisateur.logout() (handled client-side).
+   */
+  logout(): void {
+    this.cookieService.delete('token', '/', undefined, true, 'Lax');
+    localStorage.removeItem('id');  // Updated to 'id' for consistency with backend
+    localStorage.removeItem('email');
+  }
+
+  /**
+   * Handle successful authentication responses by storing the token and user details.
+   *
+   * @param response The authentication response from the backend
+   */
+  private handleAuthResponse(response: any): void {
+    this.storeToken(response.token);
+    localStorage.setItem('id', response.id || response.user_id);  // Use 'id' for consistency with backend
+    localStorage.setItem('email', response.email);
+  }
+
+  /**
+   * Store the JWT token in a cookie.
+   *
+   * @param token The JWT token received from the backend
+   */
+  private storeToken(token: string): void {
+    this.cookieService.set('token', token, {
+      path: '/',
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days expiration
+      sameSite: 'Lax'
+    });
+    console.log('Token stored in cookie:', token);
+  }
+
+  /**
+   * Get the current JWT token from the cookie.
+   *
+   * @returns The JWT token or an empty string if not found
+   */
+  getToken(): string {
+    return this.cookieService.get('token') || '';
+  }
+
+  /**
+   * Log the current token from the cookie to the console for debugging.
+   */
+  logTokenFromCookie(): void {
+    const token = this.getToken();
+    if (token) {
+      console.log('Token from cookie:', token);
+    } else {
+      console.log('No token found in cookie');
+    }
+  }
+
+  /**
+   * Handle HTTP errors and return an observable with the error.
+   *
+   * @param error The HTTP error response
+   * @returns Observable with the error
+   */
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An unknown error occurred';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else if (error.error && typeof error.error === 'object' && 'message' in error.error) {
+      // Backend error with a message
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    console.error('HTTP Error:', errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
+}
