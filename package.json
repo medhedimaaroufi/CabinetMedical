@@ -28,6 +28,7 @@
     "@capacitor/status-bar": "7.0.0",
     "@ionic/angular": "^8.0.0",
     "@supabase/supabase-js": "^2.48.1",
+    "dotenv": "^16.4.7",
     "ionicons": "^7.0.0",
     "jwt-decode": "^4.0.0",
     "ngx-cookie-service": "^19.1.0",
