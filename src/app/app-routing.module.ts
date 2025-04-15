@@ -44,10 +44,6 @@ const routes: Routes = [
     canActivate: [authGuard] // Protect admin dashboard
   },
   {
-    path: '**', // Wildcard route for 404
-    redirectTo: 'home'
-  },
-  {
     path: 'patient-dashboard',
     loadChildren: () => import('./patient-dashboard/patient-dashboard.module').then( m => m.PatientDashboardPageModule)
   },

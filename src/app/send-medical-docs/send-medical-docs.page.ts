@@ -23,6 +23,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 import {environment} from "../../environments/environment";
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-send-medical-docs',
@@ -45,7 +46,9 @@ import {environment} from "../../environments/environment";
     IonButtons,
     IonText,
     IonBackButton,
-    IonSpinner
+    IonSpinner,
+    NgForOf,
+    NgIf
   ],
   standalone: true
 })
