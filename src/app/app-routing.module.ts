@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import {SigninComponent} from "./signin/signin.component";
 
 const routes: Routes = [
   {
@@ -13,14 +12,18 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'signup',
+    loadChildren: () => import('./signup/signup.module').then( m => m.SignupPageModule)
+  },
+  {
     path: 'signin',
-    component: SigninComponent,
-    pathMatch: 'full'
+    loadChildren: () => import('./signin/signin.module').then( m => m.SigninPageModule)
   },
   {
     path: 'notification',
     loadChildren: () => import('./notification/notification.module').then( m => m.NotificationPageModule)
   },
+
 
 ];
 
