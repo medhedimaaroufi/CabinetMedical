@@ -63,7 +63,11 @@ const routes: Routes = [
     path: 'send-medical-docs',
     loadChildren: () => import('./send-medical-docs/send-medical-docs.module').then( m => m.SendMedicalDocsPageModule),
     canActivate: [authGuard]
-  }
+  },
+  {
+    path: 'notification',
+    loadChildren: () => import('./notification/notification.module').then( m => m.NotificationPageModule)
+  },
 ];
 
 @NgModule({
