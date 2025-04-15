@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   IonBackButton,
@@ -26,9 +26,9 @@ import {environment} from "../../environments/environment";
 import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
-  selector: 'app-patient-dashboard',
-  templateUrl: './patient-dashboard.page.html',
-  styleUrls: ['./patient-dashboard.page.scss'],
+  selector: 'app-send-medical-docs',
+  templateUrl: './send-medical-docs.page.html',
+  styleUrls: ['./send-medical-docs.page.scss'],
   imports: [
     IonHeader,
     IonToolbar,
@@ -47,12 +47,12 @@ import {NgForOf, NgIf} from "@angular/common";
     IonText,
     IonBackButton,
     IonSpinner,
-    NgIf,
-    NgForOf
+    NgForOf,
+    NgIf
   ],
   standalone: true
 })
-export class PatientDashboardPage implements OnInit {
+export class SendMedicalDocsPage  {
   selectedFile: File | null = null;
   description: string = '';
   patientId: string = ''; // For doctors/admins to select a patient
@@ -69,20 +69,6 @@ export class PatientDashboardPage implements OnInit {
     private http: HttpClient,
     private router: Router
   ) {}
-
-  ngOnInit(): void {
-    if (!this.authService.getToken()) {
-      this.router.navigate(['/signin']);
-      return;
-    }
-
-    // Set patientId based on role
-    if (this.userRole === 'patient') {
-      this.patientId = this.userId; // Patients upload for themselves
-    } else if (this.userRole === 'doctor' || this.userRole === 'admin') {
-      this.fetchPatients(); // Fetch patient list for doctors/admins
-    }
-  }
 
   fetchPatients(): void {
     this.http
