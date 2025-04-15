@@ -56,6 +56,10 @@ const routes: Routes = [
     loadChildren: () => import('./admin-dashboard/admin-dashboard.module').then( m => m.AdminDashboardPageModule)
   },
   {
+    path: 'profile',
+    loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
+  },
+  {
     path: 'send-medical-docs',
     loadChildren: () => import('./send-medical-docs/send-medical-docs.module').then( m => m.SendMedicalDocsPageModule),
     canActivate: [authGuard]
