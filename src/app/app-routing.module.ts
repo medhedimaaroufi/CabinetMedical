@@ -59,10 +59,10 @@ const routes: Routes = [
     path: 'admin-dashboard',
     loadChildren: () => import('./admin-dashboard/admin-dashboard.module').then( m => m.AdminDashboardPageModule)
   },
+  {
     path: 'profile',
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
-  },
-
+  }
 ];
 
 @NgModule({
