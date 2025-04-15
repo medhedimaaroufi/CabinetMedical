@@ -1,8 +1,32 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpEvent, HttpRequest, HttpHeaders } from '@angular/common/http';
+import { catchError, Observable, tap, throwError, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
+
+// Interfaces for type safety
+interface AuthResponse {
+  token: string;
+  id: string;
+  email: string;
+  role?: string;
+  message?: string;
+}
+
+interface UserRegistration {
+  name: string;
+  email: string;
+  phone: string;
+  dob: string; // YYYY-MM-DD
+  password: string;
+  address: string;
+  role: 'patient' | 'doctor';
+}
+
+interface Patient {
+  id: string;
+  name: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -21,26 +45,35 @@ export class AuthService {
    * @param phone The patient's phone number
    * @param dob The patient's date of birth (YYYY-MM-DD)
    * @param password The patient's password
-   * @param address
+   * @param address The patient's address
    * @returns Observable with the registration response
    */
-  registerPatient(name: string, email: string, phone: string, dob: string, password: string, address: string): Observable<any> {
-    return this.http.post(`${this.backendUrl}/api/auth/register`, {
-      name,
-      email,
-      phone,
-      dob,
-      password,
-      address,
-      role: 'patient'  // Explicitly specify patient role for backend
-    }).pipe(
-      tap((response: any) => {
-        if (response.token && response.id && response.email) {
-          this.handleAuthResponse(response);
-        }
-      }),
-      catchError(this.handleError)
-    );
+  registerPatient(
+    name: string,
+    email: string,
+    phone: string,
+    dob: string,
+    password: string,
+    address: string
+  ): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.backendUrl}/api/auth/register`, {
+        name,
+        email,
+        phone,
+        dob,
+        password,
+        address,
+        role: 'patient'
+      })
+      .pipe(
+        tap((response) => {
+          if (response.token && response.id && response.email) {
+            this.handleAuthResponse(response);
+          }
+        }),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -52,25 +85,35 @@ export class AuthService {
    * @param phone The doctor's phone number
    * @param dob The doctor's date of birth (YYYY-MM-DD)
    * @param password The doctor's password
+   * @param address The doctor's address
    * @returns Observable with the registration response
    */
-  registerDoctor(name: string, email: string, phone: string, dob: string, password: string, address: string): Observable<any> {
-    return this.http.post(`${this.backendUrl}/api/auth/register`, {
-      name,
-      email,
-      phone,
-      dob,
-      password,
-      address,
-      role: 'doctor'  // Explicitly specify doctor role for backend
-    }).pipe(
-      tap((response: any) => {
-        if (response.ok) {
-          console.log('Registration successful:', response);
-        }
-      }),
-      catchError(this.handleError)
-    );
+  registerDoctor(
+    name: string,
+    email: string,
+    phone: string,
+    dob: string,
+    password: string,
+    address: string
+  ): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.backendUrl}/api/auth/register`, {
+        name,
+        email,
+        phone,
+        dob,
+        password,
+        address,
+        role: 'doctor'
+      })
+      .pipe(
+        tap((response) => {
+          if (response.message) {
+            console.log('Registration successful:', response.message);
+          }
+        }),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -81,18 +124,20 @@ export class AuthService {
    * @param password The user's password
    * @returns Observable with the login response
    */
-  login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.backendUrl}/api/auth/login`, {
-      email,
-      password
-    }).pipe(
-      tap((response: any) => {
-        if (response.token && response.id && response.email) {
-          this.handleAuthResponse(response);
-        }
-      }),
-      catchError(this.handleError)
-    );
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.backendUrl}/api/auth/login`, {
+        email,
+        password
+      })
+      .pipe(
+        tap((response) => {
+          if (response.token && response.id && response.email) {
+            this.handleAuthResponse(response);
+          }
+        }),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -101,8 +146,9 @@ export class AuthService {
    */
   logout(): void {
     this.cookieService.delete('token', '/', undefined, true, 'Lax');
-    localStorage.removeItem('id');  // Updated to 'id' for consistency with backend
+    localStorage.removeItem('id');
     localStorage.removeItem('email');
+    localStorage.removeItem('role');
   }
 
   /**
@@ -110,10 +156,11 @@ export class AuthService {
    *
    * @param response The authentication response from the backend
    */
-  private handleAuthResponse(response: any): void {
+  private handleAuthResponse(response: AuthResponse): void {
     this.storeToken(response.token);
-    localStorage.setItem('id', response.id || response.user_id);  // Use 'id' for consistency with backend
+    localStorage.setItem('id', response.id);
     localStorage.setItem('email', response.email);
+    localStorage.setItem('role', response.role || '');
   }
 
   /**
@@ -149,6 +196,44 @@ export class AuthService {
     } else {
       console.log('No token found in cookie');
     }
+  }
+
+  /**
+   * Fetch the list of patients for doctors and admins.
+   *
+   * @returns Observable with the list of patients
+   */
+  getPatients(): Observable<Patient[]> {
+    return this.http
+      .get<Patient[]>(`${this.backendUrl}/api/users/patients`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error fetching patients:', error);
+          return of([]); // Return empty array on error
+        })
+      );
+  }
+
+  /**
+   * Upload a medical document.
+   * Corresponds to the "Envoi des docs médicaux" use case #8.
+   *
+   * @param formData FormData containing the file and metadata
+   * @returns Observable with the upload event
+   */
+  uploadDocument(formData: FormData): Observable<HttpEvent<any>> {
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      Authorization: token ? `Bearer ${token}` : ''
+    });
+
+    const req = new HttpRequest('POST', `${this.backendUrl}/api/documents/upload`, formData, {
+      reportProgress: true,
+      responseType: 'json',
+      headers: headers
+    });
+
+    return this.http.request(req);
   }
 
   /**
