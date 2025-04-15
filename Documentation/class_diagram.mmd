@@ -1,0 +1,113 @@
+classDiagram
+  class Utilisateur {
+    -id: number
+    -name: string
+    -email: string
+    -password: string
+    -dob: Date
+    -phone: string
+    -address: string
+    +register(): void
+    +authenticate(): boolean
+    +manageAccount(): void
+    +receiveNotification(): void
+    +searchServices(): Service[]
+  }
+
+  class Patient {
+    -medicalHistory: Consultation[]
+    -appointments: Appointment[]
+    +scheduleAppointment(doctor: Docteur, date: Date): boolean
+    +sendMedicalDocuments(doc: Document): void
+    +viewMedicalHistory(): HistoriqueConsultation[]
+  }
+
+  class Docteur {
+    -specialty: string
+    -calendar: Calendar
+    -consultations: Consultation[]
+    +manageAppointments(): void
+    +viewDocuments(): Document[]
+    +manageConsultations(): void
+    +manageCalendar(): void
+    +provideService(service: Service): void
+    +addFreeTime(startTime: Date, endTime: Date): void
+  }
+
+  class Appointment {
+    -appointmentId: number
+    -patientId: number
+    -doctorId: number
+    -dateTime: Date
+    -status: string
+    -calendarSlotId: number
+    +schedule(): void
+    +cancel(): void
+    +updateStatus(status: string): void
+    +checkAvailability(calendar: Calendar): boolean
+  }
+
+  class Document {
+    -docId: number
+    -patientId: number
+    -filePath: string
+    -uploadDate: Date
+    +upload(file: File): void
+    +download(): File
+  }
+
+  class Consultation {
+    -consultationId: number
+    -doctorId: number
+    -patientId: number
+    -date: Date
+    -details: string
+    +addDetails(details: string): void
+    +getDetails(): string
+  }
+
+  class Calendar {
+    -events: Appointment[]
+    -doctorId: number
+    -freeSlots: TimeSlot[]
+    +addEvent(appointment: Appointment): void
+    +removeEvent(appointmentId: number): void
+    +getSchedule(): Appointment[]
+    +addFreeTime(startTime: Date, endTime: Date): TimeSlot
+    +checkAvailability(dateTime: Date): boolean
+  }
+
+  class Service {
+    -serviceId: number
+    -name: string
+    -description: string
+    -doctorId: number
+    +getDetails(): string
+    +assignDoctor(doctor: Docteur): void
+  }
+
+  class TimeSlot {
+    -slotId: number
+    -doctorId: number
+    -startTime: Date
+    -endTime: Date
+    -isAvailable: boolean
+    +markAvailable(): void
+    +markUnavailable(): void
+    +getAvailability(): boolean
+  }
+
+  Utilisateur <|-- Patient : extends
+  Utilisateur <|-- Docteur : extends
+  Patient "1" -- "0..*" Appointment : schedules
+  Docteur "1" -- "0..*" Appointment : manages
+  Patient "1" -- "0..*" Document : uploads
+  Docteur "1" -- "0..*" Consultation : conducts
+  Docteur "1" -- "1" Calendar : owns
+  Appointment "1" -- "1" Docteur : assignedTo
+  Appointment "1" -- "1" Patient : bookedBy
+  Consultation "1" -- "1" Patient : for
+  Service "0..*" -- "1" Utilisateur : searchedBy
+  Docteur "1" -- "0..*" Service : provides
+  Appointment "1" -- "1" Calendar : scheduledIn
+  Calendar "1" -- "0..*" TimeSlot : contains
