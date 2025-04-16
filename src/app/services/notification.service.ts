@@ -12,13 +12,13 @@ export class NotificationService {
 
   // Fetch notifications (optional filter by ID)
   getNotifications(id?: string): Observable<any> {
-    const url = id ? `${environment.apiUrl}/api/notifications?id=${id}` :
-      `${environment.apiUrl}/api/notifications`;
+    const url = id ? `${environment.backendUrl}/api/notification/notifications?id=${id}` :
+      `${environment.backendUrl}/api/notification/notifications`;
     return this.http.get(url);
   }
 
   // Add a new notification
   addNotification(data: any): Observable<any> {
-    return this.http.post(environment.apiUrl, data);
+    return this.http.post(environment.backendUrl, data);
   }
 }

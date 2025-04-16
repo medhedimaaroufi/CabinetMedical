@@ -27,7 +27,8 @@ export class NotificationPage implements OnInit {
   constructor(private notificationService: NotificationService) {}
 
   ngOnInit() {
-    this.loadNotifications("67b89a5ded613f8fefda9ac9");
+    console.log(localStorage.getItem("id"));
+    this.loadNotifications(localStorage.getItem("id") || '');
   }
 
   loadNotifications(id?: string) {
