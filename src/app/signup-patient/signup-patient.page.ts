@@ -3,7 +3,7 @@ import {Router, RouterLink} from '@angular/router';
 import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonContent, IonDatetime, IonHeader, IonInput, IonItem, IonLabel, IonModal, IonText, IonTitle, IonToolbar } from "@ionic/angular/standalone";
 import { FormsModule } from "@angular/forms";
 import {DatePipe, NgIf} from "@angular/common";
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/services/auth/auth.service';
 
 @Component({
   selector: 'app-signup-patient',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
 import {jwtDecode} from 'jwt-decode'; // Import jwt-decode
 import {

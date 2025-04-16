@@ -4,7 +4,7 @@ import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonConte
 import { FormsModule } from "@angular/forms";
 import {DatePipe, NgIf} from "@angular/common";
 import { CookieService } from 'ngx-cookie-service';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/services/auth/auth.service';
 
 @Component({
   selector: 'app-signup-doctor',

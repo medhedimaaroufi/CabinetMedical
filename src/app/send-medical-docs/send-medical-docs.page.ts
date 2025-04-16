@@ -19,7 +19,7 @@ import {
   IonToolbar
 } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/services/auth/auth.service';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 import {environment} from "../../environments/environment";

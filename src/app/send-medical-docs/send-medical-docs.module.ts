@@ -15,6 +15,5 @@ import { SendMedicalDocsPage } from './send-medical-docs.page';
     IonicModule,
     SendMedicalDocsPageRoutingModule
   ],
-  declarations: []
 })
 export class SendMedicalDocsPageModule {}

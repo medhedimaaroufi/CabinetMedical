@@ -8,7 +8,7 @@ import {Observable} from "rxjs";
 })
 export class AppointmentService {
 
-  private apiUrl = environment.BACKENDURL; // Utiliser l'URL du backend
+  private apiUrl = environment.backendUrl; // Utiliser l'URL du backend
 
   constructor(private http: HttpClient) {}
 

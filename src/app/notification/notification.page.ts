@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common'; // Import CommonModule
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '../../services/notifications/notification.service';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 interface Notification {
