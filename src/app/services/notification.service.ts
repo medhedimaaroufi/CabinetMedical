@@ -12,8 +12,8 @@ export class NotificationService {
 
   // Fetch notifications (optional filter by ID)
   getNotifications(id?: string): Observable<any> {
-    const url = id ? `${environment.backendUrl}/api/notifications?id=${id}` :
-      `${environment.backendUrl}/api/notifications`;
+    const url = id ? `${environment.backendUrl}/api/notification/notifications?id=${id}` :
+      `${environment.backendUrl}/api/notification/notifications`;
     return this.http.get(url);
   }
 

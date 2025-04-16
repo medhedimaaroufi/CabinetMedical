@@ -14,6 +14,6 @@ export class AppointmentService {
   constructor(private http: HttpClient) {}
 
   getAppointments(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/appointment?email=${localStorage.getItem('email')}`);
+    return this.http.get<any>(`${this.apiUrl}/api/patient/appointments?email=${localStorage.getItem('email')}`);
   }
 }
