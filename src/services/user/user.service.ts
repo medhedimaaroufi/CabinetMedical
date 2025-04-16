@@ -12,11 +12,11 @@ import { User } from 'src/models/User';
 
 export class UserService {
 
-  private apiUrl = environment.BACKENDURL; // Utiliser l'URL du backend
+  private apiUrl = environment.backendUrl; // Utiliser l'URL du backend
 
   constructor(private http: HttpClient) {}
 
   getUser(): Observable<User> {
-    return this.http.get<any>(`${this.apiUrl}/api/user?email=${localStorage.getItem('email')}`);
+    return this.http.get<any>(`${this.apiUrl}/api/auth/user?email=${localStorage.getItem('email')}`);
   }
 }

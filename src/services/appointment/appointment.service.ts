@@ -9,11 +9,11 @@ import {Appointment} from "src/models/Appointment";
 })
 export class AppointmentService {
 
-  private apiUrl = environment.BACKENDURL; // Utiliser l'URL du backend
+  private apiUrl = environment.backendUrl; // Utiliser l'URL du backend
 
   constructor(private http: HttpClient) {}
 
   getAppointments(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/appointment?email=${localStorage.getItem('email')}`);
+    return this.http.get<any>(`${this.apiUrl}/api/patient/appointments?email=${localStorage.getItem('email')}`);
   }
 }

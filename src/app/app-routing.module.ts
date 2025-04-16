@@ -44,10 +44,6 @@ const routes: Routes = [
     canActivate: [authGuard] // Protect admin dashboard
   },
   {
-    path: '**', // Wildcard route for 404
-    redirectTo: 'home'
-  },
-  {
     path: 'patient-dashboard',
     loadChildren: () => import('./patient-dashboard/patient-dashboard.module').then( m => m.PatientDashboardPageModule)
   },
@@ -59,10 +55,23 @@ const routes: Routes = [
     path: 'admin-dashboard',
     loadChildren: () => import('./admin-dashboard/admin-dashboard.module').then( m => m.AdminDashboardPageModule)
   },
+  {
     path: 'profile',
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
   },
-
+  {
+    path: 'send-medical-docs',
+    loadChildren: () => import('./send-medical-docs/send-medical-docs.module').then( m => m.SendMedicalDocsPageModule),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'signin',
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'notification',
+    loadChildren: () => import('./notification/notification.module').then( m => m.NotificationPageModule)
+  },
 ];
 
 @NgModule({

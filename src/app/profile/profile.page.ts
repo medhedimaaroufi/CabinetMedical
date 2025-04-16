@@ -10,6 +10,7 @@ import {AppointmentService} from "../../services/appointment/appointment.service
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
+  standalone: true,
   imports: [
     IonicModule,
     NgIf,

@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Notifications
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="notifications; else loading">
+    <ion-item *ngFor="let notif of notifications">
+      <ion-label>
+        <h2>{{ notif.object }}</h2>
+        <p>{{ notif.message }}</p>
+        <small>{{ notif.date }}</small>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ng-template #loading>
+    <ion-spinner name="crescent"></ion-spinner>
+  </ng-template>
+</ion-content>
