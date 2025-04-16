@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/services/auth/auth.service';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 
 export const authGuard: CanActivateFn = (route, state) => {
