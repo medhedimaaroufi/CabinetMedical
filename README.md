@@ -2,11 +2,11 @@
 CabinetMedical is the front-end component of the CABINEMEDICAL application, a medical management system built with Ionic and Angular. It provides a responsive, mobile-friendly interface for patients, doctors, and admins to interact with the system, including user authentication, medical document uploads, and patient management. The backend is hosted on Render at Backend-CabinetMedical.
 
 ## Features
-User Authentication: Secure registration and login for patients, doctors, and admins, integrated with the backend's JWT-based authentication.
-Medical Document Uploads: Allows patients to upload their medical documents (PDF, JPEG, PNG) and doctors/admins to upload for any patient, with role-based access control.
-Role-Based Navigation: Guards ensure users can only access authorized routes (e.g., patients can't access doctor dashboards).
-Patient Management: Doctors and admins can view a list of patients and manage their documents.
-Responsive Design: Built with Ionic for a seamless experience on both mobile and desktop devices.
+- User Authentication: Secure registration and login for patients, doctors, and admins, integrated with the backend's JWT-based authentication.
+- Medical Document Uploads: Allows patients to upload their medical documents (PDF, JPEG, PNG) and doctors/admins to upload for any patient, with role-based access control.
+- Role-Based Navigation: Guards ensure users can only access authorized routes (e.g., patients can't access doctor dashboards).
+- Patient Management: Doctors and admins can view a list of patients and manage their documents.
+- Responsive Design: Built with Ionic for a seamless experience on both mobile and desktop devices.
 
 ## Tech Stack
 - Framework: Ionic 8 with Angular 19
