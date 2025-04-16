@@ -63,7 +63,6 @@ const routes: Routes = [
     path: 'send-medical-docs',
     loadChildren: () => import('./send-medical-docs/send-medical-docs.module').then( m => m.SendMedicalDocsPageModule),
     canActivate: [authGuard]
-    loadChildren: () => import('./signup/signup.module').then( m => m.SignupPageModule)
   },
   {
     path: 'signin',
