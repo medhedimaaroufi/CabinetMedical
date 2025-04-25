@@ -168,3 +168,23 @@ ion-item {
   }
 }
 
+.force-light-mode {
+  --background: #ffffff;
+  --ion-background-color: #ffffff;
+  --ion-text-color: #000000;
+  --color: #000000;
+  --wheel-highlight-background: #ffffff;
+  --wheel-fade-background-rgb: 255, 255, 255;
+
+  color: #000 !important;
+  background-color: #fff !important;
+
+  // Targeting wheel picker items
+  .datetime-wheel-item,
+  .sc-ion-datetime-md .datetime-wheel-item,
+  .sc-ion-datetime-ios .datetime-wheel-item {
+    color: #000 !important;
+  }
+}
+
+
