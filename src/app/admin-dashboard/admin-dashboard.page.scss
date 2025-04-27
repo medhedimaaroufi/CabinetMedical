@@ -1,0 +1,63 @@
+.admin-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 5vh 2vw;
+  background: #f8f9fa;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 3vh;
+}
+
+.logo {
+  margin-top: 10vh;
+  width: 60vw;
+  max-width: 25rem;
+}
+
+.admin-card {
+  border-radius: 1rem;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  width: 100%;
+  max-width: 800px;
+}
+
+.doctor-list {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+ion-item {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  margin-bottom: 1rem;
+}
+
+ion-button {
+  width: 3rem;
+}
+
+.loading-spinner {
+  display: block;
+  margin: 1rem auto;
+  color: #007bff;
+}
+
+.doctor-pending {
+  border-left: 4px solid #007bff;
+  padding-left: 0.75rem;
+}
+
+.doctor-approved {
+  border-left: 4px solid #22ff00;
+  padding-left: 0.75rem;
+}
+
+.doctor-rejected {
+  border-left: 4px solid #ff0000;
+  padding-left: 0.75rem;
+}

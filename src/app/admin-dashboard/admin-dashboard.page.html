@@ -1,3 +1,58 @@
-<p>
-  admin-dashboard works!
-</p>
+<ion-content class="admin-dashboard-container">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Admin Dashboard</ion-title>
+      <ion-buttons slot="end">
+        <ion-button fill="clear" (click)="logout()"><ion-icon name="log-out-outline"></ion-icon></ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="logo-container">
+    <img src="assets/icon/Docly.png" alt="Docly Logo" class="logo" />
+  </div>
+
+  <ion-card class="admin-card">
+    <ion-card-content>
+      <!-- Loading Spinner -->
+      <ion-spinner *ngIf="loading" class="loading-spinner"></ion-spinner>
+
+      <!-- Error/Success Messages -->
+      <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
+      <ion-text color="success" *ngIf="successMessage">{{ successMessage }}</ion-text>
+
+      <ion-select (ionChange)="filterDoctors()" aria-label="Fruit" interface="action-sheet" [(ngModel)]="selectedStatus">
+        <ion-select-option value="all">All</ion-select-option>
+        <ion-select-option value="approved">Approved</ion-select-option>
+        <ion-select-option value="pending">Pending</ion-select-option>
+        <ion-select-option value="rejected">Rejected</ion-select-option>
+      </ion-select>
+      <!-- Doctor List -->
+      <ion-list class="doctor-list" *ngIf="doctors.length > 0 && !loading">
+        <ion-item (click)="presentAlert(doctor)" [attr.id]="'present-alert-' + doctor.id" slot="end" *ngFor="let doctor of filteredDoctors">
+          <div class="{{'doctor-' + doctor.registrationStatus }}">
+            <ion-label>
+              <h2>{{ doctor.name }}</h2>
+              <p>Email: {{ doctor.email }}</p>
+              <p>Status: {{ doctor.registrationStatus}}</p>
+            </ion-label>
+          </div>
+        </ion-item>
+      </ion-list>
+
+      <!-- No Doctors Message -->
+      <ion-text *ngIf="doctors.length === 0 && !loading">
+        No doctors found.
+      </ion-text>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Dynamic Alert for each doctor -->
+  <ion-alert
+    *ngFor="let doctor of doctors"
+    [trigger]="'present-alert-' + doctor.id"
+    header="Update Doctor Status"
+    [buttons]="alertButtons"
+    [inputs]="alertInputs"
+  ></ion-alert>
+</ion-content>
