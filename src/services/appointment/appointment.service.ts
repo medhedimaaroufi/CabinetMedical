@@ -13,7 +13,11 @@ export class AppointmentService {
 
   constructor(private http: HttpClient) {}
 
-  getAppointments(): Observable<any> {
+  getPatientAppointments(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/api/patient/appointments?email=${localStorage.getItem('email')}`);
+  }
+
+  getDoctorAppointments(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/doctor/appointments?email=${localStorage.getItem('email')}`);
   }
 }

@@ -72,20 +72,40 @@ export class ProfilePage implements OnInit {
   }
 
   fetchAppointments() {
-    this.appointmentService.getAppointments().subscribe({
-      next: (response) => {
-        this.appointments = response.appointments || [];
-        console.log('Appointments fetched:', this.appointments); // Debug log
-        this.splitAppointments();
-      },
-      error: (err) => {
-        console.error('Error fetching appointments:', err);
-        this.appointments = [];
-        this.upcomingAppointments = [];
-        this.oldAppointments = [];
-        this.groupedAppointments = [];
-      }
-    });
+    if (this.role === 'doctor') {
+      this.appointmentService.getDoctorAppointments().subscribe({
+        next: (response) => {
+          this.appointments = response.appointments || [];
+          console.log('Appointments fetched:', this.appointments); // Debug log
+          this.splitAppointments();
+        },
+        error: (err) => {
+          console.error('Error fetching appointments:', err);
+          this.appointments = [];
+          this.upcomingAppointments = [];
+          this.oldAppointments = [];
+          this.groupedAppointments = [];
+        }
+      });
+      return;
+    }
+
+    if (this.role === 'patient') {
+      this.appointmentService.getPatientAppointments().subscribe({
+        next: (response) => {
+          this.appointments = response.appointments || [];
+          console.log('Appointments fetched:', this.appointments); // Debug log
+          this.splitAppointments();
+        },
+        error: (err) => {
+          console.error('Error fetching appointments:', err);
+          this.appointments = [];
+          this.upcomingAppointments = [];
+          this.oldAppointments = [];
+          this.groupedAppointments = [];
+        }
+      });
+    }
   }
 
   getInitials(name: string): string {
