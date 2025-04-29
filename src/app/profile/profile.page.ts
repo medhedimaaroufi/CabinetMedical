@@ -5,6 +5,8 @@ import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { Appointment } from "../../models/Appointment";
 import { AppointmentService } from "../../services/appointment/appointment.service";
 import { MedicalFileService } from "../../services/medicalFile/medicalfile.service";
+import {Consultation} from "../../models/Consultation";
+import {ConsultationService} from "../../services/consultation/consultation.service";
 
 @Component({
   selector: 'app-profile',
@@ -34,18 +36,24 @@ export class ProfilePage implements OnInit {
   // Doctor's schedule
   workingDays: number[] = [2, 3, 4, 5, 6]; // Monday to Friday
   workingHours: { start: number; end: number }[] = [
-    { start: 8, end: 12 }, // 8 AM to 12 PM
-    { start: 14, end: 18 } // 2 PM to 6 PM
+    {start: 8, end: 12}, // 8 AM to 12 PM
+    {start: 14, end: 18} // 2 PM to 6 PM
   ];
   daysOff: string[] = [];
-  workingWeekends: string[] = []; // Dates (Saturdays/Sundays) the doctor has marked as working
   appointmentDuration: number = 30; // Each appointment is 30 minutes
+  // Consultations properties
+  consultations: Consultation[] = [];
+  isLoadingConsultations = false;
+  consultationsError: string | null = null;
+  selectedConsultation: Consultation | null = null; // To store the consultation for the modal
 
   constructor(
     private userService: UserService,
     private appointmentService: AppointmentService,
-    private medicalFileService: MedicalFileService
-  ) {}
+    private medicalFileService: MedicalFileService,
+    private consultationService: ConsultationService
+  ) {
+  }
 
   ngOnInit() {
     this.userService.getUser().subscribe({
@@ -55,11 +63,13 @@ export class ProfilePage implements OnInit {
         this.role = user.role.toLowerCase() === 'docteur' ? 'doctor' : user.role.toLowerCase();
         console.log('User fetched - Name:', this.name, 'Role:', this.role);
         this.fetchAppointments();
+        this.getConsultations();
       },
       error: (err) => {
         console.error('Error fetching user:', err);
         this.role = '';
         this.fetchAppointments();
+        this.getConsultations();
       }
     });
   }
@@ -224,7 +234,7 @@ export class ProfilePage implements OnInit {
 
   updateHighlightedDates() {
     const startDate = new Date(1925, 0, 1); // January 1, 1925
-    const endDate = new Date(2125,0, 1); // January 1, 2125
+    const endDate = new Date(2125, 0, 1); // January 1, 2125
     const highlighted: { date: string; textColor: string; backgroundColor: string }[] = [];
 
     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
@@ -247,6 +257,7 @@ export class ProfilePage implements OnInit {
     this.highlightedDates = highlighted;
   }
 
+  //  Medical File
   downloadMedicalFile() {
     if (this.role !== 'patient') {
       console.log('Only patients can download their medical file.');
@@ -269,5 +280,37 @@ export class ProfilePage implements OnInit {
         alert('Failed to download medical file. Please try again later.');
       }
     });
+  }
+
+  //Consultations
+
+  getConsultations() {
+    const fetchObservable = this.role === 'patient'
+      ? this.consultationService.getConsultations()
+      : null;
+
+    if (fetchObservable) {
+      this.isLoadingConsultations = true;
+      fetchObservable.subscribe({
+        next: (response: { consultations: Consultation[] }) => {
+          this.consultations = response.consultations || [];
+          this.consultationsError = null;
+          this.isLoadingConsultations = false;
+          console.log('Consultations fetched:', this.consultations);
+        },
+        error: (err: any) => {
+          console.error('Error fetching consultations:', err);
+          this.consultations = [];
+          this.consultationsError = 'Failed to load consultations. Please try again.';
+          this.isLoadingConsultations = false;
+        }
+      });
+    }
+  }
+
+  // Method to open the modal and set the selected consultation
+  openConsultationModal(consultation: Consultation) {
+    this.selectedConsultation = consultation;
+    this.setOpen(true);
   }
 }
