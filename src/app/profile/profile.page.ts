@@ -159,7 +159,6 @@ export class ProfilePage implements OnInit {
   onDateChange(event: any) {
     const selectedDateValue = event.detail.value;
     this.selectedDate = new Date(selectedDateValue);
-    this.date = selectedDateValue; // Update the date property
     console.log('Selected date:', this.selectedDate);
 
     if (this.selectedDate) {
@@ -175,7 +174,6 @@ export class ProfilePage implements OnInit {
     console.log('Selected day appointments:', this.selectedDayAppointments);
 
     this.setOpen(true);
-    this.updateHighlightedDates(); // Refresh highlights for the new month
   }
 
   formatDate(date: Date | null): string {
@@ -191,15 +189,7 @@ export class ProfilePage implements OnInit {
   isWorkingDay(date: Date): boolean {
     const day = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
     const dateString = date.toISOString().split('T')[0];
-
-    // Check if the day is a weekend (Saturday=6, Sunday=0)
-    const isWeekend = day === 0 || day === 6;
-
-    // A day is a working day if:
-    // - It's a weekday (Monday to Friday) and not in daysOff, OR
-    // - It's a weekend day but explicitly marked as working in workingWeekends
-    return (this.workingDays.includes(day) && !this.daysOff.includes(dateString)) ||
-      (isWeekend && this.workingWeekends.includes(dateString));
+    return this.workingDays.includes(day) && !this.daysOff.includes(dateString);
   }
 
   getAvailableSlotsInDay(): number {
@@ -223,53 +213,18 @@ export class ProfilePage implements OnInit {
 
   toggleDayOff(date: Date) {
     const dateString = date.toISOString().split('T')[0];
-    const day = date.getDay();
-    const isWeekend = day === 0 || day === 6;
-
-    if (isWeekend) {
-      // If it's a weekend, toggle it in workingWeekends
-      const index = this.workingWeekends.indexOf(dateString);
-      if (index > -1) {
-        // If already marked as working, remove it (make it non-working again, red mark returns)
-        this.workingWeekends.splice(index, 1);
-      } else {
-        // If not marked as working, add it (make it a working day, red mark disappears)
-        this.workingWeekends.push(dateString);
-        // Remove from daysOff if it was there
-        const daysOffIndex = this.daysOff.indexOf(dateString);
-        if (daysOffIndex > -1) {
-          this.daysOff.splice(daysOffIndex, 1);
-        }
-      }
+    const index = this.daysOff.indexOf(dateString);
+    if (index > -1) {
+      this.daysOff.splice(index, 1);
     } else {
-      // If it's a weekday, toggle it in daysOff
-      const index = this.daysOff.indexOf(dateString);
-      if (index > -1) {
-        // If already marked as a day off, remove it (make it working again)
-        this.daysOff.splice(index, 1);
-      } else {
-        // If not marked as a day off, add it (make it non-working)
-        this.daysOff.push(dateString);
-        // Remove from workingWeekends if it was there
-        const workingWeekendsIndex = this.workingWeekends.indexOf(dateString);
-        if (workingWeekendsIndex > -1) {
-          this.workingWeekends.splice(workingWeekendsIndex, 1);
-        }
-      }
+      this.daysOff.push(dateString);
     }
     this.updateHighlightedDates();
   }
 
   updateHighlightedDates() {
-    // Determine the month and year to highlight
-    const referenceDate = this.selectedDate || new Date(this.date);
-    const year = referenceDate.getFullYear();
-    const month = referenceDate.getMonth(); // 0 = January, 11 = December
-
-    // Set start and end dates for the month
-    const startDate = new Date(year, month, 1); // First day of the month
-    const endDate = new Date(year, month + 1, 0); // Last day of the month
-
+    const startDate = new Date(1925, 0, 1); // January 1, 1925
+    const endDate = new Date(2125,0, 1); // January 1, 2125
     const highlighted: { date: string; textColor: string; backgroundColor: string }[] = [];
 
     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
