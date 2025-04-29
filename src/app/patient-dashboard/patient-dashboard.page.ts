@@ -137,8 +137,8 @@ export class PatientDashboardPage implements OnInit {
     const formData = new FormData();
     formData.append('file', this.selectedFile);
     formData.append('description', this.description);
-    formData.append('patientId', this.patientId || this.userId); // Use patientId or userId for patients
-    formData.append('uploadedBy', this.userId);
+    formData.append('patient_id', this.patientId); // Use patientId or userId for patients
+    formData.append('uploader_id', this.userId);
     formData.append('role', this.userRole);
 
     this.authService.uploadDocument(formData).subscribe({

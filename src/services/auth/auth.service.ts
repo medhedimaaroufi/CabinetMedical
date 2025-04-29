@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpEvent, HttpRequest, HttpHeaders } fr
 import { catchError, Observable, tap, throwError, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
+import {Doctor} from "../../models/Doctor";
 
 // Interfaces for type safety
 interface AuthResponse {
@@ -219,6 +220,7 @@ export class AuthService {
    * Corresponds to the "Envoi des docs médicaux" use case #8.
    *
    * @param formData FormData containing the file and metadata
+   * @param uploaderId
    * @returns Observable with the upload event
    */
   uploadDocument(formData: FormData): Observable<HttpEvent<any>> {
@@ -227,7 +229,7 @@ export class AuthService {
       Authorization: token ? `Bearer ${token}` : ''
     });
 
-    const req = new HttpRequest('POST', `${this.backendUrl}/api/documents/upload`, formData, {
+    const req = new HttpRequest('POST', `${this.backendUrl}/api/patient/upload-doc`, formData, {
       reportProgress: true,
       responseType: 'json',
       headers: headers
@@ -256,5 +258,36 @@ export class AuthService {
     }
     console.error('HTTP Error:', errorMessage);
     return throwError(() => new Error(errorMessage));
+  }
+
+  /**
+   * Fetch the list of doctors for admin management.
+   *
+   * @returns Observable with the list of doctors
+   */
+  getDoctors(): Observable<Doctor[]> {
+    return this.http
+      .get<Doctor[]>(`${this.backendUrl}/api/doctor/doctors`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error fetching doctors:', error);
+          return of([]); // Return empty array on error
+        })
+      );
+  }
+
+  /**
+   * Update the status of a doctor (pending/approved).
+   *
+   * @param doctorId The ID of the doctor
+   * @param status The new status ('pending' or 'approved')
+   * @returns Observable with the update response
+   */
+  updateDoctorStatus(doctorId: string, status: 'pending' | 'approved' | 'rejected'): Observable<any> {
+    return this.http
+      .put(`${this.backendUrl}/api/doctor/update-status`, { doctorId, status })
+      .pipe(
+        catchError(this.handleError)
+      );
   }
 }
