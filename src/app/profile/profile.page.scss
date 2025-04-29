@@ -34,67 +34,6 @@
   font-weight: bold;
 }
 
-
-.calendar-container {
-  padding: 20px;
-
-  p {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  ion-list {
-    background: transparent;
-  }
-
-  .calendar-date {
-    --background: #f4f5f8;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 5px;
-
-    h2 {
-      font-size: 1.2rem;
-    }
-  }
-
-  .calendar-event {
-    margin: 5px 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    --padding-start: 15px;
-    --padding-end: 15px;
-
-    ion-label {
-      p {
-        margin: 2px 0;
-        font-size: 0.9rem;
-        color: #333;
-      }
-    }
-
-    &.status-en-attente {
-      --background: #fff3cd;
-      border-left: 5px solid #ffca2c;
-    }
-
-    &.status-annulé {
-      --background: #f8d7da;
-      border-left: 5px solid #dc3545;
-    }
-
-    &.status-confirmé {
-      --background: #d4edda;
-      border-left: 5px solid #28a745;
-    }
-  }
-}
-
-// Ensure proper display of ion-items
-ion-item {
-  --background: transparent;
-}
-// Calendar container
 .calendar-container {
   padding: 20px;
   background: #f9f9f9;
@@ -119,6 +58,10 @@ ion-item {
     border-bottom: 1px solid #e0e0e0;
     margin-bottom: 10px;
     padding: 10px 0;
+
+    h2 {
+      font-size: 1.2rem;
+    }
   }
 
   .calendar-event {
@@ -168,6 +111,38 @@ ion-item {
   }
 }
 
+ion-item {
+  --background: transparent;
+}
+
+/* Style for ion-datetime */
+ion-datetime {
+  width: 100% !important;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for modal */
+ion-modal {
+  --border-radius: 10px;
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  ion-content {
+    h1 {
+      font-size: 1.3rem;
+      color: #4a90e2;
+      margin-bottom: 10px;
+    }
+
+    ion-button {
+      margin: 10px 0;
+    }
+  }
+}
+
 .force-light-mode {
   --background: #ffffff;
   --ion-background-color: #ffffff;
@@ -179,12 +154,9 @@ ion-item {
   color: #000 !important;
   background-color: #fff !important;
 
-  // Targeting wheel picker items
   .datetime-wheel-item,
   .sc-ion-datetime-md .datetime-wheel-item,
   .sc-ion-datetime-ios .datetime-wheel-item {
     color: #000 !important;
   }
 }
-
-

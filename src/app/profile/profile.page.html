@@ -25,7 +25,7 @@
   <div *ngIf="role === 'patient'">
     <!-- Upcoming Appointments -->
     <div class="calendar-container">
-      <p class="calendar-title">Appointments Calendar</p>
+      <p class="calendar-title">Upcoming Appointments</p>
       <ion-list>
         <ng-container *ngIf="upcomingAppointments.length > 0; else noUpcoming">
           <ng-container *ngFor="let appointment of upcomingAppointments">
@@ -50,7 +50,7 @@
     </div>
     <!-- Old Appointments -->
     <div class="calendar-container">
-      <p class="calendar-title">Old Appointments</p>
+      <p class="calendar-title">Previous Consultations</p>
       <ion-list>
         <ng-container *ngIf="oldAppointments.length > 0; else noOld">
           <ng-container *ngFor="let appointment of oldAppointments">
@@ -68,22 +68,26 @@
         </ng-container>
         <ng-template #noOld>
           <ion-item lines="none">
-            <ion-label class="no-appointments">No old appointments</ion-label>
+            <ion-label class="no-appointments">No previous consultations</ion-label>
           </ion-item>
         </ng-template>
       </ion-list>
+    </div>
+    <!--Medical File section-->
+    <div class="medical-file-container">
+      <ion-item *ngIf="role === 'patient'">
+        <ion-button expand="block" (click)="downloadMedicalFile()">
+          Download Medical File
+        </ion-button>
+      </ion-item>
     </div>
   </div>
   <!-- Doctor Appointments -->
   <div *ngIf="role === 'doctor'" class="calendar-container">
     <p class="calendar-title">Appointments Calendar</p>
-    <ion-datetime
-      presentation="date"
-      value="{{date}}"
-      [highlightedDates]="highlightedDates"
-      class="force-light-mode"
-      (ionChange)="onDateChange($event)"
-    ></ion-datetime>
+    <ion-datetime presentation="date" value="{{date}}" [highlightedDates]="highlightedDates" class="force-light-mode" (ionChange)="onDateChange($event)" firstDayOfWeek="1" locale="en-US">
+      <!-- Dummy comment to force Angular to recognize this as a non-self-closing tag -->
+    </ion-datetime>
     <ion-content class="ion-padding">
       <ion-modal [isOpen]="isModalOpen">
         <ng-template>
@@ -99,6 +103,13 @@
             <h1>
               {{formatDate(selectedDate)}}
             </h1>
+            <ion-button
+              *ngIf="selectedDate"
+              (click)="toggleDayOff(selectedDate)"
+              [color]="daysOff.includes(selectedDate.toISOString().split('T')[0]) ? 'danger' : 'primary'"
+            >
+              {{ daysOff.includes(selectedDate.toISOString().split('T')[0]) ? 'Mark as Working Day' : 'Mark as Day Off' }}
+            </ion-button>
             <ion-list>
               <ng-container *ngIf="selectedDayAppointments.length > 0; else noAppointments">
                 <ng-container *ngFor="let appointment of selectedDayAppointments">
