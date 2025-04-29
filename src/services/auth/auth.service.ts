@@ -220,6 +220,7 @@ export class AuthService {
    * Corresponds to the "Envoi des docs médicaux" use case #8.
    *
    * @param formData FormData containing the file and metadata
+   * @param uploaderId
    * @returns Observable with the upload event
    */
   uploadDocument(formData: FormData): Observable<HttpEvent<any>> {
@@ -228,7 +229,7 @@ export class AuthService {
       Authorization: token ? `Bearer ${token}` : ''
     });
 
-    const req = new HttpRequest('POST', `${this.backendUrl}/api/documents/upload`, formData, {
+    const req = new HttpRequest('POST', `${this.backendUrl}/api/patient/upload-doc`, formData, {
       reportProgress: true,
       responseType: 'json',
       headers: headers
