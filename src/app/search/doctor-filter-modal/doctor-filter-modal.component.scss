@@ -1,0 +1,52 @@
+ion-content {
+}
+
+ion-item {
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  margin: 8px 16px;
+}
+
+ion-input {
+  --padding-start: 12px;
+  --border-radius: 8px;
+}
+
+ion-card.doctor-card {
+  margin: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+ion-card.doctor-card ion-card-header {
+  padding: 16px;
+}
+
+ion-card.doctor-card ion-card-title {
+  font-size: 1.2rem;
+}
+
+ion-card.doctor-card ion-card-content {
+  padding: 16px;
+}
+
+ion-card.no-data-card {
+  margin: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+ion-button.apply-button {
+  margin: 16px;
+  --border-radius: 8px;
+}
+
+.text-gray-600 {
+}
+
+.text-gray-500 {
+}

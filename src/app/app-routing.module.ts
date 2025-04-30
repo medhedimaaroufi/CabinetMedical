@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { authGuard } from './guard/auth.guard'; // Adjust the path as needed
+import { authGuard} from "../guard/auth.guard";
 
 const routes: Routes = [
   {
@@ -71,11 +71,11 @@ const routes: Routes = [
   {
     path: 'notification',
     loadChildren: () => import('./notification/notification.module').then( m => m.NotificationPageModule)
-  },  {
-    path: 'recherche',
-    loadChildren: () => import('./recherche/recherche.module').then( m => m.RecherchePageModule)
   },
-
+  {
+    path: 'search',
+    loadChildren: () => import('./search/search.module').then( m => m.SearchPageModule)
+  }
 ];
 
 @NgModule({
