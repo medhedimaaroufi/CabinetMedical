@@ -6,13 +6,13 @@ import {Observable} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class AppointmentService {
+export class ConsultationService {
 
   private apiUrl = environment.backendUrl; // Utiliser l'URL du backend
 
   constructor(private http: HttpClient) {}
 
   getConsultations(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/api/consultation?email=${localStorage.getItem('email')}`);
+    return this.http.get<any>(`${this.apiUrl}/api/patient/view-medical-history?email=${localStorage.getItem('email')}`);
   }
 }

@@ -1,5 +1,4 @@
 export const environment = {
   production: false,
-  backendUrl: 'https://backend-cabinetmedical.onrender.com',
-  apiUrl: 'http://127.0.0.1:5000/api',
+  backendUrl: 'http://127.0.0.1:5000'//'https://backend-cabinetmedical.onrender.com',
 }
