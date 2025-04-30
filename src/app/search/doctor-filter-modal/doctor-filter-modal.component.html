@@ -1,0 +1,55 @@
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Filter Doctors</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="cancel()">Cancel</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-item>
+      <ion-label position="floating">Name or Email</ion-label>
+      <ion-input
+        [(ngModel)]="nameFilter"
+        (ionInput)="onNameFilterChange()"
+        placeholder="Enter name or email"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Address</ion-label>
+      <ion-input
+        [(ngModel)]="addressFilter"
+        (ionInput)="onAddressFilterChange()"
+        placeholder="Enter address"
+      ></ion-input>
+    </ion-item>
+
+    <ion-card
+      *ngFor="let doctor of filteredDoctors"
+      class="doctor-card"
+    >
+      <ion-card-header>
+        <ion-card-title class="font-bold">Dr. {{ doctor.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="text-gray-600">{{ doctor.speciality || 'No specialty' }}</p>
+        <p class="text-gray-600">{{ doctor.email }}</p>
+        <p class="text-gray-600">{{ doctor.address }}</p>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngIf="filteredDoctors.length === 0" class="no-data-card">
+      <ion-card-content>
+        <p class="text-center text-gray-500">No doctors found.</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button
+      expand="block"
+      class="apply-button"
+      (click)="applyFilters()"
+      [disabled]="filteredDoctors.length === 0"
+    >
+      Apply Filters
+    </ion-button>
+  </ion-content>

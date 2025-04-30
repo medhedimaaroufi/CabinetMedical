@@ -1,0 +1,100 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Search Medical Services & Doctors</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="search($event)"
+    placeholder="Search by name, email, or address..."
+    debounce="300"
+    showClearButton="always"
+  ></ion-searchbar>
+
+  <ion-segment [(ngModel)]="segment" (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="services">
+      <ion-label>Services</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="doctors">
+      <ion-label>Doctors</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Services Section -->
+  <div *ngIf="segment === 'services'" class="section">
+    <ion-item lines="none">
+      <ion-select
+        [formControl]="serviceCategoryControl"
+        placeholder="Select Category"
+        interface="action-sheet"
+      >
+        <ion-select-option value="">All Categories</ion-select-option>
+        <ion-select-option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-card
+      *ngFor="let service of filteredServices"
+      class="service-card"
+      button
+      (click)="selectService(service)"
+    >
+      <ion-card-header>
+        <ion-card-title class="font-bold">{{ service.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="text-gray-600">{{ service.category }}</p>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngIf="filteredServices.length === 0" class="no-data-card">
+      <ion-card-content>
+        <p class="text-center text-gray-500">No services found.</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Doctors Section -->
+  <div *ngIf="segment === 'doctors'" class="section">
+    <div class="filter-controls">
+      <ion-item lines="none">
+        <ion-select
+          [formControl]="doctorSpecialtyControl"
+          placeholder="Select Specialty"
+          interface="action-sheet"
+        >
+          <ion-select-option value="">All Specialties</ion-select-option>
+          <ion-select-option *ngFor="let specialty of specialties" [value]="specialty">
+            {{ specialty }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-button fill="outline" (click)="openFilterModal()">Filter</ion-button>
+    </div>
+    <ion-card
+      *ngFor="let doctor of filteredDoctors"
+      class="doctor-card"
+      button
+      (click)="selectDoctor(doctor)"
+    >
+      <ion-card-header>
+        <ion-card-title class="font-bold">Dr. {{ doctor.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="text-gray-600">{{ doctor.speciality || 'No specialty' }}</p>
+        <p class="text-gray-600">{{ doctor.email }}</p>
+        <p class="text-gray-600">{{ doctor.address }}</p>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngIf="filteredDoctors.length === 0" class="no-data-card">
+      <ion-card-content>
+        <p class="text-center text-gray-500">No doctors found.</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
