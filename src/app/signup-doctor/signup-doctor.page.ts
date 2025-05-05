@@ -10,6 +10,7 @@ import { AuthService } from 'src/services/auth/auth.service';
   selector: 'app-signup-doctor',
   templateUrl: './signup-doctor.page.html',
   styleUrls: ['./signup-doctor.page.scss'],
+  standalone: true,
   imports: [
     IonHeader,
     IonToolbar,
@@ -34,6 +35,7 @@ import { AuthService } from 'src/services/auth/auth.service';
 })
 export class SignupDoctorPage {
   name: string = '';
+  speciality: string = '';
   email: string = '';
   phone: string = '';
   dob: string = '';
@@ -44,6 +46,7 @@ export class SignupDoctorPage {
 
   // Validation error messages
   nameError: boolean = false;
+  specialityError: boolean = false;
   emailError: boolean = false;
   phoneError: boolean = false;
   dobError: boolean = false;
@@ -62,13 +65,14 @@ export class SignupDoctorPage {
 
   validateForm(): boolean {
     this.nameError = this.name.trim() === '';
+    this.specialityError = this.speciality.trim() === '';
     this.emailError = this.email.trim() === '';
     this.phoneError = this.phone.trim() === '';
     this.dobError = this.dob.trim() === '';
     this.passwordError = this.password.length < 8;
     this.addressError = this.address.trim() === '';
 
-    return !(this.nameError || this.emailError || this.phoneError || this.dobError || this.passwordError || this.addressError);
+    return !(this.nameError || this.specialityError || this.emailError || this.phoneError || this.dobError || this.passwordError || this.addressError);
   }
 
   signup(event: Event) {
@@ -78,7 +82,7 @@ export class SignupDoctorPage {
       return;
     }
 
-    this.authService.registerDoctor(this.name, this.email, this.phone, this.dob.slice(0, 10), this.password, this.address)
+    this.authService.registerDoctor(this.name, this.speciality, this.email, this.phone, this.dob.slice(0, 10), this.password, this.address)
       .subscribe(
         (response: any) => {
           console.log('Signup Success:', response);

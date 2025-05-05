@@ -98,7 +98,7 @@ export class SearchPage implements OnInit {
   }
 
   loadDoctors(query: string = '') {
-    const url = `${environment.backendUrl}/search?query=${encodeURIComponent(query)}`;
+    const url = `${environment.backendUrl}/api/search?query=${encodeURIComponent(query)}`;
     this.http.get<SearchResponse>(url).subscribe({
       next: (response) => {
         console.log('API Response:', response);

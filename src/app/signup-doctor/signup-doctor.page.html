@@ -17,6 +17,11 @@
                    autocomplete="name"></ion-input>
         <ion-text color="danger" *ngIf="nameError">Name is required</ion-text>
 
+        <ion-input class="field" type="text" label="Speciality" label-placement="floating" fill="outline"
+                   placeholder="Enter your speciality" [(ngModel)]="speciality" name="speciality" required
+                   ></ion-input>
+        <ion-text color="danger" *ngIf="specialityError">Speciality is required</ion-text>
+
         <!-- Email -->
         <ion-input class="field" type="email" label="Email" label-placement="floating" fill="outline"
                    placeholder="Enter your email" [(ngModel)]="email" name="email" required

@@ -91,6 +91,7 @@ export class AuthService {
    */
   registerDoctor(
     name: string,
+    speciality: string,
     email: string,
     phone: string,
     dob: string,
@@ -100,6 +101,7 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(`${this.backendUrl}/api/auth/register`, {
         name,
+        speciality,
         email,
         phone,
         dob,
