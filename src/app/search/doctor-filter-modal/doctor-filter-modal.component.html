@@ -24,10 +24,20 @@
         placeholder="Enter address"
       ></ion-input>
     </ion-item>
+    <ion-item>
+      <ion-label position="floating">Speciality</ion-label>
+      <ion-input
+        [(ngModel)]="specialityFilter"
+        (ionInput)="onSpecialityFilterChange()"
+        placeholder="Enter speciality"
+      ></ion-input>
+    </ion-item>
 
     <ion-card
       *ngFor="let doctor of filteredDoctors"
       class="doctor-card"
+      button
+      (click)="selectDoctor(doctor)"
     >
       <ion-card-header>
         <ion-card-title class="font-bold">Dr. {{ doctor.name }}</ion-card-title>
