@@ -1,0 +1,25 @@
+ion-card {
+  margin: 16px;
+}
+
+ion-card-title {
+  font-size: 1.5em;
+  color: var(--ion-color-primary);
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 8px;
+}
+
+ion-label {
+  h3 {
+    font-weight: bold;
+    color: var(--ion-text-color);
+    margin-bottom: 4px;
+  }
+  p {
+    color: var(--ion-color-medium);
+  }
+}
