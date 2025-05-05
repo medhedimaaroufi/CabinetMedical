@@ -1,0 +1,98 @@
+ion-content {
+}
+
+ion-searchbar {
+  --border-radius: 8px;
+  --box-shadow: none;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin: 16px;
+}
+
+ion-segment {
+  margin: 16px;
+  --border-radius: 8px;
+}
+
+ion-segment-button:not(.segment-button-checked) ion-label {
+  color: #3b82f6;
+}
+
+ion-segment-button.segment-button-checked ion-label {
+}
+
+ion-item {
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  margin: 8px 16px;
+}
+
+ion-select {
+  --border-radius: 8px;
+  --padding-start: 12px;
+}
+
+.section {
+  padding: 8px 16px;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  margin: 8px 16px;
+  gap: 8px;
+}
+
+.filter-controls ion-item {
+  flex: 1;
+  margin: 0;
+}
+
+.filter-controls ion-button {
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+ion-card.service-card, ion-card.doctor-card {
+  margin: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+ion-card.service-card:hover, ion-card.doctor-card:hover {
+  transform: translateY(-2px);
+}
+
+ion-card.service-card ion-card-header,
+ion-card.doctor-card ion-card-header {
+  padding: 16px;
+}
+
+ion-card.service-card ion-card-title,
+ion-card.doctor-card ion-card-title {
+  font-size: 1.2rem;
+}
+
+ion-card.service-card ion-card-content,
+ion-card.doctor-card ion-card-content {
+  padding: 16px;
+}
+
+ion-card.no-data-card {
+  margin: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.text-gray-600 {
+}
+
+.text-gray-500 {
+}
