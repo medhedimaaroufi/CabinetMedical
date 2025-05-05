@@ -5,6 +5,7 @@ import { FormsModule, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environment';
 import { DoctorFilterModalComponent } from './doctor-filter-modal/doctor-filter-modal.component';
+import { DoctorProfileModalComponent } from './doctor-profile-modal/doctor-profile-modal.component';
 
 interface MedicalService {
   id: number;
@@ -34,7 +35,8 @@ interface SearchResponse {
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule
+    CommonModule,
+    DoctorProfileModalComponent
   ],
   standalone: true
 })
@@ -43,15 +45,8 @@ export class SearchPage implements OnInit {
   searchTerm: string = '';
 
   // Medical Services (hardcoded as fallback)
-  services: MedicalService[] = [
-    { id: 1, name: 'Cardiology Consultation', category: 'Cardiology' },
-    { id: 2, name: 'Orthopedic Surgery', category: 'Orthopedics' },
-    { id: 3, name: 'Pediatric Checkup', category: 'Pediatrics' },
-    { id: 4, name: 'Neurological Exam', category: 'Neurology' },
-    { id: 5, name: 'Dermatology Consultation', category: 'Dermatology' }
-  ];
-  categories = ['Cardiology', 'Orthopedics', 'Pediatrics', 'Neurology', 'Dermatology'];
-  filteredServices: MedicalService[] = [...this.services];
+  services: string[] = [];
+  filteredServices: string[] = this.services;
   serviceCategoryControl = new FormControl('');
 
   // Doctors (fetched from backend)
@@ -70,8 +65,8 @@ export class SearchPage implements OnInit {
     this.loadDoctors();
 
     // Subscribe to filter changes
-    this.serviceCategoryControl.valueChanges.subscribe(() => this.filterServices());
-    this.doctorSpecialtyControl.valueChanges.subscribe(() => this.filterDoctors());
+    this.serviceCategoryControl.valueChanges.subscribe(() => this.filterServices(this.searchTerm));
+    this.doctorSpecialtyControl.valueChanges.subscribe(() => this.filterDoctors(this.searchTerm, this.searchTerm, this.searchTerm));
   }
 
   async openFilterModal() {
@@ -90,10 +85,22 @@ export class SearchPage implements OnInit {
       if (result.data) {
         const { nameFilter, addressFilter } = result.data;
         this.searchTerm = nameFilter;
-        this.filterDoctors(nameFilter, addressFilter);
+        this.filterDoctors(nameFilter, addressFilter, '');
       }
     });
 
+    await modal.present();
+  }
+
+  async openModalProfile(doctor: Doctor) {
+    const modalOptions = {
+      component: DoctorProfileModalComponent,
+      componentProps: {
+        doctor: doctor
+      }
+    } as ModalOptions;
+
+    const modal = await this.modalController.create(modalOptions);
     await modal.present();
   }
 
@@ -105,13 +112,12 @@ export class SearchPage implements OnInit {
         this.doctors = response.doctors;
         this.filteredDoctors = [...this.doctors];
         // Extract unique specialties, excluding null
-        this.specialties = [...new Set(
-          this.doctors
-            .filter(doctor => doctor.speciality !== null)
-            .map(doctor => doctor.speciality!)
-        )];
+        this.specialties = response.services;
+        console.log('Specialties:', this.specialties);
+        this.filteredServices = this.specialties;
+        console.log('Filtered Services:', this.filteredServices);
         // Apply current filters
-        this.filterDoctors();
+        this.filterDoctors(this.searchTerm, this.searchTerm, this.searchTerm);
       },
       error: (error) => {
         console.error('Error fetching doctors:', error);
@@ -124,34 +130,57 @@ export class SearchPage implements OnInit {
   search(event: any) {
     this.searchTerm = event.target.value || '';
     if (this.segment === 'services') {
-      this.filterServices();
+      this.filterServices(this.searchTerm);
     } else {
       // Reload doctors with search query
-      this.loadDoctors(this.searchTerm);
+      this.searchDoctors();
     }
   }
 
-  filterServices() {
-    const searchTerm = this.searchTerm.toLowerCase();
-    const category = this.serviceCategoryControl.value || '';
+  filterServices(value: string = this.searchTerm) {
+    const searchTerm = value.toLowerCase();
 
-    this.filteredServices = this.services.filter(service =>
-      service.name.toLowerCase().includes(searchTerm) &&
-      (!category || service.category === category)
+    console.log('Search Term:', searchTerm);
+
+    this.filteredServices = this.specialties.filter(service =>
+      service.toLowerCase().includes(searchTerm)
     );
+
+    console.log('Filtered Services:', this.filteredServices);
   }
 
-  filterDoctors(nameFilter: string = this.searchTerm, addressFilter: string = '') {
+  filterDoctors(nameFilter: string = '', addressFilter: string = '', specialtyFilter: string = '') {
     const nameTerm = nameFilter.toLowerCase();
     const addressTerm = addressFilter.toLowerCase();
-    const specialty = this.doctorSpecialtyControl.value || '';
+    const specialty = specialtyFilter.toLowerCase();
 
-    this.filteredDoctors = this.doctors.filter(doctor =>
-      (doctor.name.toLowerCase().includes(nameTerm) ||
-        doctor.email.toLowerCase().includes(nameTerm)) &&
-      (!addressTerm || doctor.address.toLowerCase().includes(addressTerm)) &&
-      (!specialty || doctor.speciality === specialty)
-    );
+    console.log('Name Filter:', nameFilter, 'Address Filter:', addressFilter, 'Specialty Filter:', specialtyFilter);
+
+    this.filteredDoctors = this.doctors.filter(doctor => {
+      const matchesName =
+        !nameTerm ||
+        doctor.name.toLowerCase().includes(nameTerm) ||
+        doctor.email.toLowerCase().includes(nameTerm);
+
+      const matchesAddress =
+        !addressTerm || doctor.address.toLowerCase().includes(addressTerm);
+
+      const matchesSpecialty =
+        !specialty || doctor.speciality?.toLowerCase() === specialty;
+
+      return matchesName && matchesAddress && matchesSpecialty;
+    });
+  }
+
+  searchDoctors() {
+    this.filteredDoctors = this.doctors.filter(doctor => {
+      return (
+        doctor.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        doctor.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        doctor.address.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        doctor?.speciality?.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    });
   }
 
   segmentChanged(event: any) {
@@ -163,11 +192,15 @@ export class SearchPage implements OnInit {
     this.loadDoctors(); // Refresh doctors
   }
 
-  selectService(service: MedicalService) {
+  selectService(service: string) {
     console.log('Selected Service:', service);
+    this.segment = 'doctors';
+    this.searchTerm = service;
+    this.filterDoctors('', '', service);
   }
 
   selectDoctor(doctor: Doctor) {
     console.log('Selected Doctor:', doctor);
+    this.openModalProfile(doctor);
   }
 }
