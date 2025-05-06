@@ -42,7 +42,7 @@
     </div>
 
     <ng-container *ngIf="doctors.length > 0; else noDoctors">
-      <ion-card *ngFor="let doctor of doctors" class="doctor-card" (click)="viewDoctorDetails(doctor)">
+      <ion-card *ngFor="let doctor of doctors" class="doctor-card" (click)="selectDoctor(doctor)">
         <ion-card-content>
           <ion-avatar slot="start">
             <div class="avatar-placeholder">{{ getInitials(doctor.name) }}</div>
