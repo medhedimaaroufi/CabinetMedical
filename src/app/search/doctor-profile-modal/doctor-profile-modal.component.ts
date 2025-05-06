@@ -43,7 +43,7 @@ export class DoctorProfileModalComponent implements OnInit {
   }
 
   loadDoctor(id: string) {
-    const url = `${environment.apiUrl}/search/doctors/${id}`;
+    const url = `${environment.backendUrl}/api/search/doctors/${id}`;
     this.http.get<Doctor>(url).subscribe({
       next: (doctor) => {
         this.doctor = doctor;

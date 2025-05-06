@@ -47,7 +47,7 @@ export class DoctorsServicesModalComponent implements OnInit {
   }
 
   async loadDoctors(specialty: string) {
-    const url = `${environment.apiUrl}/search/${encodeURIComponent(specialty)}`;
+    const url = `${environment.backendUrl}/api/search/${encodeURIComponent(specialty)}`;
     this.http.get<Doctor[]>(url).subscribe({
       next: (doctors) => {
         console.log('API Response:', doctors);
