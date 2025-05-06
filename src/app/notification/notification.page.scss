@@ -1,0 +1,192 @@
+// Content Container
+.content-container {
+  padding: 0 12px 24px;
+}
+
+// Section Titles
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  margin-top: 10px;
+
+  ion-icon {
+    font-size: 1.4rem;
+    color: var(--ion-color-primary);
+  }
+
+  span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+}
+
+// Notification Categories
+.notification-categories {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding: 4px 0;
+
+  ion-chip {
+    background-color: var(--ion-color-light);
+    border-radius: 16px;
+
+    &.selected {
+      background-color: var(--ion-color-primary);
+      color: white;
+
+      ion-badge {
+        background-color: white;
+        color: var(--ion-color-primary);
+      }
+    }
+
+    ion-badge {
+      margin-left: 4px;
+      font-size: 0.75rem;
+    }
+  }
+}
+
+// Notification Cards
+.notification-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: 12px 0;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.unread {
+    border-left: 4px solid var(--ion-color-primary);
+    background-color: rgba(98, 0, 234, 0.05);
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  position: relative;
+
+  ion-icon {
+    font-size: 1.2rem;
+    color: var(--ion-color-primary);
+  }
+
+  .notification-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--ion-color-dark);
+    flex: 1;
+  }
+
+  .notification-time {
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.card-details {
+  padding-left: 4px;
+
+  .notification-message {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    margin: 0 0 12px;
+    line-height: 1.4;
+  }
+
+  .notification-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 3rem;
+    color: var(--ion-color-medium-shade);
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+}
+
+// Loading State
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+
+  ion-spinner {
+    color: var(--ion-color-primary);
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+  }
+}
+
+// Error State
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 2.5rem;
+    color: var(--ion-color-danger);
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+}
+
+// Notification Types
+.notification-type-appointment {
+  border-left: 4px solid var(--ion-color-primary);
+}
+
+.notification-type-message {
+  border-left: 4px solid var(--ion-color-secondary);
+}
+
+.notification-type-reminder {
+  border-left: 4px solid var(--ion-color-warning);
+}
+
+.notification-type-system {
+  border-left: 4px solid var(--ion-color-medium);
+}
