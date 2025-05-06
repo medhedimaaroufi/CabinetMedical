@@ -108,7 +108,8 @@ export class SearchPage implements OnInit {
   }
 
   loadDoctors(query: string = '') {
-    const url = `${environment.apiUrl}/search?query=${encodeURIComponent(query)}`;
+    const url = `${environment.backendUrl}/search?query=${encodeURIComponent(query)}`;
+    console.log('API URL:', url);
     this.http.get<SearchResponse>(url).subscribe({
       next: (response) => {
         console.log('API Response:', response);
@@ -164,8 +165,7 @@ export class SearchPage implements OnInit {
     console.log('Search Term:', searchTerm);
 
     this.filteredServices = this.services.filter(service =>
-      service.toLowerCase().includes(searchTerm) &&
-      (!category || service.toLowerCase().includes(category.toLowerCase()))
+      service.toLowerCase().includes(searchTerm)
     );
 
     console.log('Filtered Services:', this.filteredServices);
