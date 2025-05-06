@@ -36,7 +36,6 @@ interface SearchResponse {
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    DoctorProfileModalComponent
   ],
   standalone: true
 })
