@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Doctors for {{ specialty }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="filter-controls">
+    <ion-button fill="outline" (click)="openFilterModal()">Filter</ion-button>
+  </div>
+
+  <ion-card
+    *ngFor="let doctor of filteredDoctors"
+    class="doctor-card"
+    button
+    (click)="selectDoctor(doctor)"
+  >
+    <ion-card-header>
+      <ion-card-title class="font-bold">Dr. {{ doctor.name }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p class="text-gray-600">{{ doctor.speciality || 'No specialty' }}</p>
+      <p class="text-gray-600">{{ doctor.email }}</p>
+      <p class="text-gray-600">{{ doctor.address }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="filteredDoctors.length === 0" class="no-data-card">
+    <ion-card-content>
+      <p class="text-center text-gray-500">No doctors found for {{ specialty }}.</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
