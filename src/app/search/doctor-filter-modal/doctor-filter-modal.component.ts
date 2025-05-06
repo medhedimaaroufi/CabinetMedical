@@ -21,7 +21,6 @@ interface Doctor {
     IonicModule,
     FormsModule,
     CommonModule,
-    DoctorProfileModalComponent
   ],
   standalone: true
 })

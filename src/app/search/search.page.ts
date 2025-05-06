@@ -6,15 +6,10 @@ import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environment';
 import { DoctorFilterModalComponent } from './doctor-filter-modal/doctor-filter-modal.component';
 import { DoctorProfileModalComponent } from './doctor-profile-modal/doctor-profile-modal.component';
-
-interface MedicalService {
-  id: number;
-  name: string;
-  category: string;
-}
+import { DoctorsServicesModalComponent } from './doctors-services-modal/doctors-services-modal.component';
 
 interface Doctor {
-  id: string;
+  id: number;
   name: string;
   email: string;
   address: string;
@@ -36,7 +31,6 @@ interface SearchResponse {
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    DoctorProfileModalComponent
   ],
   standalone: true
 })
@@ -44,29 +38,24 @@ export class SearchPage implements OnInit {
   segment: 'services' | 'doctors' = 'services';
   searchTerm: string = '';
 
-  // Medical Services (hardcoded as fallback)
   services: string[] = [];
-  filteredServices: string[] = this.services;
+  categories: string[] = [];
+  filteredServices: string[] = [];
   serviceCategoryControl = new FormControl('');
 
-  // Doctors (fetched from backend)
   doctors: Doctor[] = [];
   specialties: string[] = [];
   filteredDoctors: Doctor[] = [];
   doctorSpecialtyControl = new FormControl('');
 
+  doctorsByService: { [service: string]: Doctor[] } = {};
+
   constructor(private http: HttpClient, private modalController: ModalController) {}
 
   ngOnInit() {
-    // Initialize filtered services
-    this.filterServices();
-
-    // Fetch doctors from backend
     this.loadDoctors();
-
-    // Subscribe to filter changes
-    this.serviceCategoryControl.valueChanges.subscribe(() => this.filterServices(this.searchTerm));
-    this.doctorSpecialtyControl.valueChanges.subscribe(() => this.filterDoctors(this.searchTerm, this.searchTerm, this.searchTerm));
+    this.serviceCategoryControl.valueChanges.subscribe(() => this.filterServices());
+    this.doctorSpecialtyControl.valueChanges.subscribe(() => this.filterDoctors());
   }
 
   async openFilterModal() {
@@ -92,11 +81,25 @@ export class SearchPage implements OnInit {
     await modal.present();
   }
 
-  async openModalProfile(doctor: Doctor) {
+  async selectDoctor(doctor: Doctor) {
+    console.log('Doctor ID:', doctor.id, 'Type:', typeof doctor.id);
     const modalOptions = {
       component: DoctorProfileModalComponent,
       componentProps: {
-        doctor: doctor
+        doctorId: doctor.id.toString()
+      }
+    } as ModalOptions;
+
+    const modal = await this.modalController.create(modalOptions);
+    await modal.present();
+  }
+
+  async selectService(service: string) {
+    console.log('Selected Service:', service);
+    const modalOptions = {
+      component: DoctorsServicesModalComponent,
+      componentProps: {
+        specialty: service
       }
     } as ModalOptions;
 
@@ -106,23 +109,43 @@ export class SearchPage implements OnInit {
 
   loadDoctors(query: string = '') {
     const url = `${environment.backendUrl}/api/search?query=${encodeURIComponent(query)}`;
+    console.log('API URL:', url);
     this.http.get<SearchResponse>(url).subscribe({
       next: (response) => {
         console.log('API Response:', response);
-        this.doctors = response.doctors;
+        this.doctors = response.doctors.map(doctor => ({
+          ...doctor,
+          id: typeof doctor.id === 'string' && /^\d+$/.test(doctor.id) ? parseInt(doctor.id) : doctor.id
+        }));
         this.filteredDoctors = [...this.doctors];
-        // Extract unique specialties, excluding null
-        this.specialties = response.services;
-        console.log('Specialties:', this.specialties);
-        this.filteredServices = this.specialties;
-        console.log('Filtered Services:', this.filteredServices);
-        // Apply current filters
-        this.filterDoctors(this.searchTerm, this.searchTerm, this.searchTerm);
+        this.services = response.services;
+        this.filteredServices = [...this.services];
+        this.categories = [...new Set(this.services)];
+        this.specialties = [...new Set(
+          this.doctors
+            .filter(doctor => doctor.speciality !== null)
+            .map(doctor => doctor.speciality!)
+        )];
+
+        // Populate doctorsByService
+        this.doctorsByService = {};
+        this.services.forEach(service => {
+          this.doctorsByService[service] = this.doctors.filter(
+            doctor => doctor.speciality === service
+          );
+        });
+
+        this.filterServices();
+        this.filterDoctors();
       },
       error: (error) => {
         console.error('Error fetching doctors:', error);
         this.filteredDoctors = [];
         this.specialties = [];
+        this.services = [];
+        this.filteredServices = [];
+        this.categories = [];
+        this.doctorsByService = {};
       }
     });
   }
@@ -132,8 +155,7 @@ export class SearchPage implements OnInit {
     if (this.segment === 'services') {
       this.filterServices(this.searchTerm);
     } else {
-      // Reload doctors with search query
-      this.searchDoctors();
+      this.loadDoctors(this.searchTerm);
     }
   }
 
@@ -142,7 +164,7 @@ export class SearchPage implements OnInit {
 
     console.log('Search Term:', searchTerm);
 
-    this.filteredServices = this.specialties.filter(service =>
+    this.filteredServices = this.services.filter(service =>
       service.toLowerCase().includes(searchTerm)
     );
 
@@ -189,18 +211,6 @@ export class SearchPage implements OnInit {
     this.serviceCategoryControl.setValue('');
     this.doctorSpecialtyControl.setValue('');
     this.filterServices();
-    this.loadDoctors(); // Refresh doctors
-  }
-
-  selectService(service: string) {
-    console.log('Selected Service:', service);
-    this.segment = 'doctors';
-    this.searchTerm = service;
-    this.filterDoctors('', '', service);
-  }
-
-  selectDoctor(doctor: Doctor) {
-    console.log('Selected Doctor:', doctor);
-    this.openModalProfile(doctor);
+    this.loadDoctors();
   }
 }

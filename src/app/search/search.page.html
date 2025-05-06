@@ -1,8 +1,5 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" text=""></ion-back-button>
-    </ion-buttons>
     <ion-title>Search Medical Services & Doctors</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -36,6 +33,9 @@
       <ion-card-header>
         <ion-card-title class="font-bold">{{ service }}</ion-card-title>
       </ion-card-header>
+      <ion-card-content>
+        <p class="text-gray-600">Number of doctors: {{ doctorsByService[service]?.length || 0 }}</p>
+      </ion-card-content>
     </ion-card>
     <ion-card *ngIf="filteredServices.length === 0" class="no-data-card">
       <ion-card-content>
