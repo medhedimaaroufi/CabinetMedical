@@ -20,6 +20,7 @@ import {NgIf} from "@angular/common";
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
+  standalone: true,
   imports: [
     IonContent,
     IonToolbar,
@@ -64,9 +65,9 @@ export class LoginPage {
             const role = decodedToken?.role; // Extract role
 
             if (role === 'doctor') {
-              this.router.navigate(['/']);
+              this.router.navigate(['/home']).then(r => {});
             } else {
-              this.router.navigate(['/']);
+              this.router.navigate(['/home']).then(r => {});
             }
           } catch (error) {
             console.error('Invalid token:', error);

@@ -24,8 +24,8 @@ export class PatientDashboardPage implements OnInit {
   fetchDoctors() {
     this.doctorService.getDoctors().subscribe({
       next: (response) => {
-        this.doctors = response.doctors || [];
-        this.services = [...new Set(this.doctors.map(doctor => doctor.speciality))];
+        this.doctors = response.doctors.slice(0, 3) || [];
+        this.services = response.services.slice(0, 3) || [];
         console.log('Doctors fetched:', this.doctors);
         console.log('Services fetched:', this.services);
       },
