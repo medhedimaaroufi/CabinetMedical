@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Doctor Profile</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="doctor" class="profile-container">
+    <ion-card class="doctor-card">
+      <ion-card-header>
+        <ion-card-title class="font-bold">Dr. {{ doctor.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p class="text-gray-600"><strong>ID:</strong> {{ doctor.id }}</p>
+        <p class="text-gray-600"><strong>Specialty:</strong> {{ doctor.speciality || 'No specialty' }}</p>
+        <p class="text-gray-600"><strong>Email:</strong> {{ doctor.email }}</p>
+        <p class="text-gray-600"><strong>Address:</strong> {{ doctor.address }}</p>
+        <p class="text-gray-600"><strong>Phone:</strong> {{ doctor.phone }}</p>
+        <ion-button expand="block" color="primary" (click)="bookAppointment()">Book Appointment</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  <div *ngIf="error" class="error-container">
+    <ion-card class="error-card">
+      <ion-card-content>
+        <p class="text-center text-red-500">{{ error }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  <div *ngIf="!doctor && !error" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+</ion-content>

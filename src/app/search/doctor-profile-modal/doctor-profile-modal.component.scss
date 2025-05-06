@@ -1,0 +1,49 @@
+ion-content {
+}
+
+.profile-container {
+  padding: 16px;
+}
+
+ion-card.doctor-card {
+  margin: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+ion-card.doctor-card ion-card-header {
+  padding: 16px;
+}
+
+ion-card.doctor-card ion-card-title {
+  font-size: 1.4rem;
+}
+
+ion-card.doctor-card ion-card-content {
+  padding: 16px;
+}
+
+.text-gray-600 {
+  margin: 8px 0;
+}
+
+.error-container {
+  margin: 16px;
+  text-align: center;
+}
+
+ion-card.error-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

@@ -5,15 +5,11 @@ import { FormsModule, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environment';
 import { DoctorFilterModalComponent } from './doctor-filter-modal/doctor-filter-modal.component';
-
-interface MedicalService {
-  id: number;
-  name: string;
-  category: string;
-}
+import { DoctorProfileModalComponent } from './doctor-profile-modal/doctor-profile-modal.component';
+import { DoctorsServicesModalComponent } from './doctors-services-modal/doctors-services-modal.component';
 
 interface Doctor {
-  id: string;
+  id: number;
   name: string;
   email: string;
   address: string;
@@ -42,34 +38,22 @@ export class SearchPage implements OnInit {
   segment: 'services' | 'doctors' = 'services';
   searchTerm: string = '';
 
-  // Medical Services (hardcoded as fallback)
-  services: MedicalService[] = [
-    { id: 1, name: 'Cardiology Consultation', category: 'Cardiology' },
-    { id: 2, name: 'Orthopedic Surgery', category: 'Orthopedics' },
-    { id: 3, name: 'Pediatric Checkup', category: 'Pediatrics' },
-    { id: 4, name: 'Neurological Exam', category: 'Neurology' },
-    { id: 5, name: 'Dermatology Consultation', category: 'Dermatology' }
-  ];
-  categories = ['Cardiology', 'Orthopedics', 'Pediatrics', 'Neurology', 'Dermatology'];
-  filteredServices: MedicalService[] = [...this.services];
+  services: string[] = [];
+  categories: string[] = [];
+  filteredServices: string[] = [];
   serviceCategoryControl = new FormControl('');
 
-  // Doctors (fetched from backend)
   doctors: Doctor[] = [];
   specialties: string[] = [];
   filteredDoctors: Doctor[] = [];
   doctorSpecialtyControl = new FormControl('');
 
+  doctorsByService: { [service: string]: Doctor[] } = {};
+
   constructor(private http: HttpClient, private modalController: ModalController) {}
 
   ngOnInit() {
-    // Initialize filtered services
-    this.filterServices();
-
-    // Fetch doctors from backend
     this.loadDoctors();
-
-    // Subscribe to filter changes
     this.serviceCategoryControl.valueChanges.subscribe(() => this.filterServices());
     this.doctorSpecialtyControl.valueChanges.subscribe(() => this.filterDoctors());
   }
@@ -97,26 +81,70 @@ export class SearchPage implements OnInit {
     await modal.present();
   }
 
+  async selectDoctor(doctor: Doctor) {
+    console.log('Doctor ID:', doctor.id, 'Type:', typeof doctor.id);
+    const modalOptions = {
+      component: DoctorProfileModalComponent,
+      componentProps: {
+        doctorId: doctor.id.toString()
+      }
+    } as ModalOptions;
+
+    const modal = await this.modalController.create(modalOptions);
+    await modal.present();
+  }
+
+  async selectService(service: string) {
+    console.log('Selected Service:', service);
+    const modalOptions = {
+      component: DoctorsServicesModalComponent,
+      componentProps: {
+        specialty: service
+      }
+    } as ModalOptions;
+
+    const modal = await this.modalController.create(modalOptions);
+    await modal.present();
+  }
+
   loadDoctors(query: string = '') {
-    const url = `${environment.backendUrl}/search?query=${encodeURIComponent(query)}`;
+    const url = `${environment.apiUrl}/search?query=${encodeURIComponent(query)}`;
     this.http.get<SearchResponse>(url).subscribe({
       next: (response) => {
         console.log('API Response:', response);
-        this.doctors = response.doctors;
+        this.doctors = response.doctors.map(doctor => ({
+          ...doctor,
+          id: typeof doctor.id === 'string' && /^\d+$/.test(doctor.id) ? parseInt(doctor.id) : doctor.id
+        }));
         this.filteredDoctors = [...this.doctors];
-        // Extract unique specialties, excluding null
+        this.services = response.services;
+        this.filteredServices = [...this.services];
+        this.categories = [...new Set(this.services)];
         this.specialties = [...new Set(
           this.doctors
             .filter(doctor => doctor.speciality !== null)
             .map(doctor => doctor.speciality!)
         )];
-        // Apply current filters
+
+        // Populate doctorsByService
+        this.doctorsByService = {};
+        this.services.forEach(service => {
+          this.doctorsByService[service] = this.doctors.filter(
+            doctor => doctor.speciality === service
+          );
+        });
+
+        this.filterServices();
         this.filterDoctors();
       },
       error: (error) => {
         console.error('Error fetching doctors:', error);
         this.filteredDoctors = [];
         this.specialties = [];
+        this.services = [];
+        this.filteredServices = [];
+        this.categories = [];
+        this.doctorsByService = {};
       }
     });
   }
@@ -126,7 +154,6 @@ export class SearchPage implements OnInit {
     if (this.segment === 'services') {
       this.filterServices();
     } else {
-      // Reload doctors with search query
       this.loadDoctors(this.searchTerm);
     }
   }
@@ -136,8 +163,8 @@ export class SearchPage implements OnInit {
     const category = this.serviceCategoryControl.value || '';
 
     this.filteredServices = this.services.filter(service =>
-      service.name.toLowerCase().includes(searchTerm) &&
-      (!category || service.category === category)
+      service.toLowerCase().includes(searchTerm) &&
+      (!category || service.toLowerCase().includes(category.toLowerCase()))
     );
   }
 
@@ -160,14 +187,6 @@ export class SearchPage implements OnInit {
     this.serviceCategoryControl.setValue('');
     this.doctorSpecialtyControl.setValue('');
     this.filterServices();
-    this.loadDoctors(); // Refresh doctors
-  }
-
-  selectService(service: MedicalService) {
-    console.log('Selected Service:', service);
-  }
-
-  selectDoctor(doctor: Doctor) {
-    console.log('Selected Doctor:', doctor);
+    this.loadDoctors();
   }
 }
