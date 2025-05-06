@@ -30,7 +30,7 @@ interface SearchResponse {
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule
+    CommonModule,
   ],
   standalone: true
 })
@@ -74,7 +74,7 @@ export class SearchPage implements OnInit {
       if (result.data) {
         const { nameFilter, addressFilter } = result.data;
         this.searchTerm = nameFilter;
-        this.filterDoctors(nameFilter, addressFilter);
+        this.filterDoctors(nameFilter, addressFilter, '');
       }
     });
 
@@ -152,33 +152,57 @@ export class SearchPage implements OnInit {
   search(event: any) {
     this.searchTerm = event.target.value || '';
     if (this.segment === 'services') {
-      this.filterServices();
+      this.filterServices(this.searchTerm);
     } else {
       this.loadDoctors(this.searchTerm);
     }
   }
 
-  filterServices() {
-    const searchTerm = this.searchTerm.toLowerCase();
-    const category = this.serviceCategoryControl.value || '';
+  filterServices(value: string = this.searchTerm) {
+    const searchTerm = value.toLowerCase();
+
+    console.log('Search Term:', searchTerm);
 
     this.filteredServices = this.services.filter(service =>
       service.toLowerCase().includes(searchTerm) &&
       (!category || service.toLowerCase().includes(category.toLowerCase()))
     );
+
+    console.log('Filtered Services:', this.filteredServices);
   }
 
-  filterDoctors(nameFilter: string = this.searchTerm, addressFilter: string = '') {
+  filterDoctors(nameFilter: string = '', addressFilter: string = '', specialtyFilter: string = '') {
     const nameTerm = nameFilter.toLowerCase();
     const addressTerm = addressFilter.toLowerCase();
-    const specialty = this.doctorSpecialtyControl.value || '';
+    const specialty = specialtyFilter.toLowerCase();
 
-    this.filteredDoctors = this.doctors.filter(doctor =>
-      (doctor.name.toLowerCase().includes(nameTerm) ||
-        doctor.email.toLowerCase().includes(nameTerm)) &&
-      (!addressTerm || doctor.address.toLowerCase().includes(addressTerm)) &&
-      (!specialty || doctor.speciality === specialty)
-    );
+    console.log('Name Filter:', nameFilter, 'Address Filter:', addressFilter, 'Specialty Filter:', specialtyFilter);
+
+    this.filteredDoctors = this.doctors.filter(doctor => {
+      const matchesName =
+        !nameTerm ||
+        doctor.name.toLowerCase().includes(nameTerm) ||
+        doctor.email.toLowerCase().includes(nameTerm);
+
+      const matchesAddress =
+        !addressTerm || doctor.address.toLowerCase().includes(addressTerm);
+
+      const matchesSpecialty =
+        !specialty || doctor.speciality?.toLowerCase() === specialty;
+
+      return matchesName && matchesAddress && matchesSpecialty;
+    });
+  }
+
+  searchDoctors() {
+    this.filteredDoctors = this.doctors.filter(doctor => {
+      return (
+        doctor.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        doctor.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        doctor.address.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        doctor?.speciality?.toLowerCase().includes(this.searchTerm.toLowerCase())
+      );
+    });
   }
 
   segmentChanged(event: any) {

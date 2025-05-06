@@ -1,27 +1,54 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-tabs #tabs>
+  <ion-tab tab="home">
+    <div id="home-page" class="content">
+      <app-patient-dashboard></app-patient-dashboard>
+    </div>
+  </ion-tab>
+  <ion-tab tab="appointments">
+    <div id="appointments-page" class="content">
+      <app-appointments></app-appointments>
+    </div>
+  </ion-tab>
+  <ion-tab tab="search">
+    <div id="search-page" class="content">
+      <app-search></app-search>
+    </div>
+  </ion-tab>
+  <ion-tab tab="notification">
+    <div id="notification-page" class="content">
+      <app-notification></app-notification>
+    </div>
+  </ion-tab>
+  <ion-tab tab="profile">
+    <div id="profile-page" class="content">
+      <app-profile></app-profile>
+    </div>
+  </ion-tab>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon name="home-outline"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
 
-  <div id="container">
-      <h3><a rel="noopener noreferrer" href="/login">Sign In</a></h3>
-      <h3><a rel="noopener noreferrer" href="/signup">Sign Up</a></h3>
-      <h3><a rel="noopener noreferrer" href="/notification">Notifications</a></h3>
-      <h3><a rel="noopener noreferrer" href="/profile">Profile</a></h3>
-      <h3><a rel="noopener noreferrer" href="/doctor-dashboard">Doctor Dashboard</a></h3>
-      <h3><a rel="noopener noreferrer" href="/admin-dashboard">Admin Dashboard</a></h3>
-      <h3><a rel="noopener noreferrer" href="/patient-dashboard">Patient Dashboard</a></h3>
-      <h3><a rel="noopener noreferrer" href="/send-medical-docs">Upload docs</a></h3>
-      <h3><a rel="noopener noreferrer" href="/search">Search</a></h3>
-  </div>
-</ion-content>
+    <ion-tab-button tab="appointments">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <ion-label>Appointments</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="search">
+      <ion-icon name="search-outline"></ion-icon>
+      <ion-label>Search</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="notification">
+      <ion-icon name="notifications-outline"></ion-icon>
+      <ion-label>Notification</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="profile">
+      <ion-icon name="person-outline"></ion-icon>
+      <ion-label>Profile</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

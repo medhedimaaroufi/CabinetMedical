@@ -1,3 +1,9 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title size="medium">Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -7,164 +13,563 @@
       <ion-title size="medium">Profile</ion-title>
     </ion-toolbar>
   </ion-header>
-  <!-- Photo de couverture -->
-  <div class="cover-photo"></div>
-  <!-- Photo de profil -->
-  <div class="profile-container">
-    <div class="profile-pic">
-      {{ initials }}
+
+  <!-- Cover Photo and Profile Picture -->
+  <div class="profile-header">
+    <div class="cover-photo"></div>
+    <div class="profile-container">
+      <div class="profile-pic">
+        {{ initials }}
+      </div>
     </div>
-  </div>
-  <!-- Informations personnelles -->
-  <div class="profile-info">
-    <p class="name">{{ name }}</p>
-    <p class="role" *ngIf="role === 'doctor'">Doctor</p>
-    <p class="role" *ngIf="role === 'patient'">Patient</p>
-  </div>
-  <!-- Patient Appointments -->
-  <div *ngIf="role === 'patient'">
-    <!-- Upcoming Appointments -->
-    <div class="calendar-container">
-      <p class="calendar-title">Upcoming Appointments</p>
-      <ion-list>
-        <ng-container *ngIf="upcomingAppointments.length > 0; else noUpcoming">
-          <ng-container *ngFor="let appointment of upcomingAppointments">
-            <ion-item class="calendar-event" [ngClass]="getStatusClass(appointment.status)">
-              <ion-label>
-                <p>
-                  Doctor: {{ appointment.doctor_name }}<br>
-                  Day: {{ getDate(appointment.dateTime) }}<br>
-                  Time: {{ getTime(appointment.dateTime) }}<br>
-                  Status: {{ appointment.status }}
-                </p>
-              </ion-label>
-            </ion-item>
-          </ng-container>
-        </ng-container>
-        <ng-template #noUpcoming>
-          <ion-item lines="none">
-            <ion-label class="no-appointments">No upcoming appointments</ion-label>
-          </ion-item>
-        </ng-template>
-      </ion-list>
-    </div>
-    <!-- Previous Consultations -->
-    <div class="calendar-container">
-      <p class="calendar-title">Previous Consultations</p>
-      <ion-list>
-        <div *ngIf="isLoadingConsultations">
-          <ion-spinner></ion-spinner> Loading consultations...
-        </div>
-        <div *ngIf="consultationsError" class="error-message">
-          {{ consultationsError }}
-          <ion-button fill="clear" (click)="getConsultations()">Retry</ion-button>
-        </div>
-        <ng-container *ngIf="consultations.length > 0 && !isLoadingConsultations && !consultationsError; else noOld">
-          <ng-container *ngFor="let consultation of consultations">
-            <ion-item class="calendar-event" (click)="openConsultationModal(consultation)">
-              <ion-label>
-                <p>
-                  Doctor: {{ consultation.doctor_name }}<br>
-                  Day: {{ getDate(consultation.dateTime) }}<br>
-                  Time: {{ getTime(consultation.dateTime) }}<br>
-                </p>
-              </ion-label>
-            </ion-item>
-          </ng-container>
-        </ng-container>
-        <ng-template #noOld>
-          <ion-item lines="none">
-            <ion-label class="no-appointments">No previous consultations</ion-label>
-          </ion-item>
-        </ng-template>
-      </ion-list>
+
+    <!-- Profile Information -->
+    <div class="profile-info">
+      <h2 class="name">{{ name }}</h2>
+      <p class="role" *ngIf="role === 'doctor'">Doctor</p>
+      <p class="role" *ngIf="role === 'patient'">Patient</p>
     </div>
   </div>
 
-  <!-- Modal for Consultation Details -->
-  <ion-modal [isOpen]="isModalOpen">
+  <!-- PATIENT VIEW -->
+  <div *ngIf="role === 'patient'" class="content-container">
+    <!-- Tabs -->
+    <ion-segment [(ngModel)]="selectedTab" (ionChange)="segmentChanged($event)" class="custom-segment">
+      <ion-segment-button value="upcoming">
+        <ion-label>Upcoming</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="history">
+        <ion-label>History</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="medical">
+        <ion-label>Medical File</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Tab Content -->
+    <div class="tab-content" [ngClass]="{'active': selectedTab === 'upcoming'}" *ngIf="selectedTab === 'upcoming'">
+      <div class="section-title">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Upcoming Appointments</span>
+      </div>
+
+      <ng-container *ngIf="upcomingAppointments.length > 0; else noUpcoming">
+        <ion-card *ngFor="let appointment of upcomingAppointments" class="appointment-card" [ngClass]="getStatusClass(appointment.status)" (click)="viewAppointmentDetails(appointment)">
+          <ion-card-content>
+            <div class="card-header">
+              <ion-icon name="medkit-outline"></ion-icon>
+              <span class="doctor-name">Dr. {{ appointment.doctor_name }}</span>
+            </div>
+            <div class="card-details">
+              <div class="detail-item">
+                <ion-icon name="calendar-number-outline"></ion-icon>
+                <span>{{ getDate(appointment.dateTime) }}</span>
+              </div>
+              <div class="detail-item">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>{{ getTime(appointment.dateTime) }}</span>
+              </div>
+              <div class="detail-item status">
+                <ion-icon name="ellipse" [ngClass]="getStatusIconClass(appointment.status)"></ion-icon>
+                <span>{{ appointment.status }}</span>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+
+      <ng-template #noUpcoming>
+        <div class="empty-state">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <p>No upcoming appointments</p>
+          <ion-button fill="outline" size="small" routerLink="/book-appointment">
+            Book Now
+            <ion-icon name="add-outline" slot="end"></ion-icon>
+          </ion-button>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="tab-content" [ngClass]="{'active': selectedTab === 'history'}" *ngIf="selectedTab === 'history'">
+      <div class="section-title">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>Previous Consultations</span>
+      </div>
+
+      <div *ngIf="isLoadingConsultations" class="loading-container">
+        <ion-spinner></ion-spinner>
+        <p>Loading consultations...</p>
+      </div>
+
+      <div *ngIf="consultationsError" class="error-container">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ consultationsError }}</p>
+        <ion-button fill="outline" size="small" (click)="getConsultations()">
+          Retry
+          <ion-icon name="refresh-outline" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+
+      <ng-container *ngIf="consultations.length > 0 && !isLoadingConsultations && !consultationsError; else noHistory">
+        <ion-card *ngFor="let consultation of consultations" class="consultation-card" (click)="openConsultationModal(consultation)">
+          <ion-card-content>
+            <div class="card-header">
+              <ion-icon name="medkit-outline"></ion-icon>
+              <span class="doctor-name">Dr. {{ consultation.doctor_name }}</span>
+            </div>
+            <div class="card-details">
+              <div class="detail-item">
+                <ion-icon name="calendar-number-outline"></ion-icon>
+                <span>{{ getDate(consultation.dateTime) }}</span>
+              </div>
+              <div class="detail-item">
+                <ion-icon name="time-outline"></ion-icon>
+                <span>{{ getTime(consultation.dateTime) }}</span>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+
+      <ng-template #noHistory>
+        <div class="empty-state" *ngIf="!isLoadingConsultations && !consultationsError">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <p>No previous consultations found</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="tab-content" [ngClass]="{'active': selectedTab === 'medical'}" *ngIf="selectedTab === 'medical'">
+      <div class="section-title">
+        <ion-icon name="folder-open-outline"></ion-icon>
+        <span>Medical File</span>
+      </div>
+
+      <div class="medical-file-container">
+        <ion-card>
+          <ion-card-content class="file-download">
+            <ion-icon name="document-text-outline" size="large"></ion-icon>
+            <div class="file-info">
+              <h3>Your Medical Records</h3>
+              <p>Access your complete medical history</p>
+            </div>
+            <ion-button expand="block" (click)="downloadMedicalFile()">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Download
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCTOR VIEW -->
+  <div *ngIf="role === 'doctor'" class="content-container">
+    <!-- Tabs -->
+    <ion-segment [(ngModel)]="selectedDoctorTab" (ionChange)="doctorSegmentChanged($event)" class="custom-segment">
+      <ion-segment-button value="schedule">
+        <ion-label>Schedule</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="patients">
+        <ion-label>Patients</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="stats">
+        <ion-label>Analytics</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Schedule Tab -->
+    <div class="tab-content" [ngClass]="{'active': selectedDoctorTab === 'schedule'}" *ngIf="selectedDoctorTab === 'schedule'">
+      <div class="section-title">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Appointments Calendar</span>
+      </div>
+
+      <div class="schedule-header">
+        <ion-card class="summary-card">
+          <ion-card-content>
+            <div class="summary-number">{{todayAppointments.length}}</div>
+            <div class="summary-label">Today's Appointments</div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="summary-card">
+          <ion-card-content>
+            <div class="summary-number">{{weeklyAppointments}}</div>
+            <div class="summary-label">This Week</div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="summary-card" [ngClass]="{'warning': nextAvailableSlot === 'None'}">
+          <ion-card-content>
+            <div class="summary-value">{{nextAvailableSlot}}</div>
+            <div class="summary-label">Next Available</div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <ion-card class="calendar-card">
+        <ion-card-content>
+          <ion-datetime
+            presentation="date"
+            value="{{date}}"
+            [highlightedDates]="highlightedDates"
+            class="force-light-mode"
+            (ionChange)="onDateChange($event)"
+            firstDayOfWeek="1"
+            locale="en-US">
+          </ion-datetime>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card *ngIf="todayAppointments.length > 0" class="today-appointments">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="today-outline"></ion-icon>
+            Today's Schedule
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="timeline">
+            <div *ngFor="let appointment of todayAppointments" class="timeline-item" [ngClass]="getStatusClass(appointment.status)">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-time">{{getTime(appointment.dateTime)}}</div>
+                <div class="timeline-info">
+                  <div class="patient-name">{{appointment.patient_name}}</div>
+                  <div class="appointment-type">{{appointment.status}}</div>
+                </div>
+                <div class="timeline-actions">
+                  <ion-button fill="clear" size="small" (click)="viewPatientDetails(appointment)">
+                    <ion-icon name="person-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" size="small" (click)="startConsultation(appointment)">
+                    <ion-icon name="videocam-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="quick-actions">
+        <ion-card-header>
+          <ion-card-title>Quick Actions</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="actions-grid">
+            <div class="action-button" (click)="openNewAppointment()">
+              <ion-icon name="add-circle-outline"></ion-icon>
+              <span>New Appointment</span>
+            </div>
+            <div class="action-button" (click)="manageDaysOff()">
+              <ion-icon name="calendar-clear-outline"></ion-icon>
+              <span>Days Off</span>
+            </div>
+            <div class="action-button" (click)="openTimeSlots()">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>Time Slots</span>
+            </div>
+            <div class="action-button" (click)="openSettings()">
+              <ion-icon name="settings-outline"></ion-icon>
+              <span>Settings</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Patients Tab -->
+    <div class="tab-content" [ngClass]="{'active': selectedDoctorTab === 'patients'}" *ngIf="selectedDoctorTab === 'patients'">
+      <div class="section-title">
+        <ion-icon name="people-outline"></ion-icon>
+        <span>My Patients</span>
+      </div>
+
+      <div class="search-container">
+        <ion-searchbar placeholder="Search patients" [(ngModel)]="patientSearchTerm" (ionInput)="searchPatients()"></ion-searchbar>
+      </div>
+
+      <div class="patient-categories">
+        <ion-chip [ngClass]="{'selected': patientCategory === 'all'}" (click)="filterPatients('all')">
+          <ion-label>All</ion-label>
+          <ion-badge>{{patientsList.length}}</ion-badge>
+        </ion-chip>
+        <ion-chip [ngClass]="{'selected': patientCategory === 'recent'}" (click)="filterPatients('recent')">
+          <ion-label>Recent</ion-label>
+          <ion-badge>{{recentPatients.length}}</ion-badge>
+        </ion-chip>
+        <ion-chip [ngClass]="{'selected': patientCategory === 'upcoming'}" (click)="filterPatients('upcoming')">
+          <ion-label>Upcoming</ion-label>
+          <ion-badge>{{upcomingPatients.length}}</ion-badge>
+        </ion-chip>
+      </div>
+
+      <ion-list>
+        <ion-item *ngFor="let patient of filteredPatients" detail="true" button (click)="viewPatientProfile(patient)">
+          <ion-avatar slot="start">
+            <div class="avatar-placeholder">{{getInitials(patient.name)}}</div>
+          </ion-avatar>
+          <ion-label>
+            <h2>{{patient.name}}</h2>
+            <p>Last visit: {{patient.lastVisit || 'Never'}}</p>
+          </ion-label>
+          <div slot="end" class="patient-actions">
+            <ion-button fill="clear" (click)="$event.stopPropagation(); contactPatient(patient)">
+              <ion-icon name="mail-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-item>
+      </ion-list>
+
+      <div *ngIf="filteredPatients.length === 0" class="empty-state">
+        <ion-icon name="people-outline"></ion-icon>
+        <p *ngIf="patientSearchTerm">No patients match your search</p>
+        <p *ngIf="!patientSearchTerm">No patients in this category</p>
+      </div>
+    </div>
+
+    <!-- Analytics Tab -->
+    <div class="tab-content" [ngClass]="{'active': selectedDoctorTab === 'stats'}" *ngIf="selectedDoctorTab === 'stats'">
+      <div class="section-title">
+        <ion-icon name="analytics-outline"></ion-icon>
+        <span>Practice Analytics</span>
+      </div>
+
+      <div class="analytics-period">
+        <ion-segment [(ngModel)]="analyticsPeriod" (ionChange)="updateAnalytics()">
+          <ion-segment-button value="week">
+            <ion-label>Week</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="month">
+            <ion-label>Month</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="year">
+            <ion-label>Year</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <div class="stats-grid">
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <div class="stat-icon">
+              <ion-icon name="people-outline"></ion-icon>
+            </div>
+            <div class="stat-value">{{analytics.totalPatients}}</div>
+            <div class="stat-label">Total Patients</div>
+            <div class="stat-change" [ngClass]="{'positive': analytics.patientChange > 0, 'negative': analytics.patientChange < 0}">
+              <ion-icon name="{{analytics.patientChange >= 0 ? 'arrow-up-outline' : 'arrow-down-outline'}}"></ion-icon>
+              {{analytics.patientChange}}%
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <div class="stat-icon">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <div class="stat-value">{{analytics.consultations}}</div>
+            <div class="stat-label">Consultations</div>
+            <div class="stat-change" [ngClass]="{'positive': analytics.consultationChange > 0, 'negative': analytics.consultationChange < 0}">
+              <ion-icon name="{{analytics.consultationChange >= 0 ? 'arrow-up-outline' : 'arrow-down-outline'}}"></ion-icon>
+              {{analytics.consultationChange}}%
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <div class="stat-icon">
+              <ion-icon name="trending-up-outline"></ion-icon>
+            </div>
+            <div class="stat-value">{{analytics.appointmentRate}}%</div>
+            <div class="stat-label">Booking Rate</div>
+            <div class="stat-change" [ngClass]="{'positive': analytics.rateChange > 0, 'negative': analytics.rateChange < 0}">
+              <ion-icon name="{{analytics.rateChange >= 0 ? 'arrow-up-outline' : 'arrow-down-outline'}}"></ion-icon>
+              {{analytics.rateChange}}%
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="stat-card">
+          <ion-card-content>
+            <div class="stat-icon">
+              <ion-icon name="time-outline"></ion-icon>
+            </div>
+            <div class="stat-value">{{analytics.avgDuration}}m</div>
+            <div class="stat-label">Avg Duration</div>
+            <div class="stat-change" [ngClass]="{'positive': analytics.durationChange <= 0, 'negative': analytics.durationChange > 0}">
+              <ion-icon name="{{analytics.durationChange <= 0 ? 'arrow-up-outline' : 'arrow-down-outline'}}"></ion-icon>
+              {{Math.abs(analytics.durationChange)}}%
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <ion-card class="chart-card">
+        <ion-card-header>
+          <ion-card-title>Consultation Trends</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="chart-placeholder">
+            <div class="chart-bars">
+              <div *ngFor="let item of analytics.chartData" class="chart-bar" [style.height]="item.value + '%'">
+                <div class="bar-tooltip">{{item.value}} consultations</div>
+              </div>
+            </div>
+            <div class="chart-labels">
+              <div *ngFor="let item of analytics.chartData" class="chart-label">{{item.label}}</div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="appointment-types-card">
+        <ion-card-header>
+          <ion-card-title>Appointment Types</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="donut-chart-container">
+            <div class="donut-chart">
+              <div class="donut-segment" *ngFor="let type of analytics.appointmentTypes; let i = index"
+                   [style.--start]="type.startAngle"
+                   [style.--end]="type.endAngle"
+                   [style.--color]="type.color">
+              </div>
+              <div class="donut-hole"></div>
+            </div>
+            <div class="donut-legend">
+              <div *ngFor="let type of analytics.appointmentTypes" class="legend-item">
+                <div class="legend-color" [style.background-color]="type.color"></div>
+                <div class="legend-text">
+                  <div class="legend-label">{{type.name}}</div>
+                  <div class="legend-value">{{type.percentage}}%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+
+  <!-- Consultation Details Modal -->
+  <ion-modal [isOpen]="isModalOpen && role === 'patient'" [canDismiss]="true" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75, 1]">
     <ng-template>
       <ion-header>
         <ion-toolbar>
           <ion-title>Consultation Details</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="setOpen(false)">Close</ion-button>
+            <ion-button (click)="setOpen(false)">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-        <div *ngIf="selectedConsultation">
-          <p><strong>Doctor:</strong> {{ selectedConsultation.doctor_name }}</p>
-          <p><strong>Patient:</strong> {{ selectedConsultation.patient_name }}</p>
-          <p><strong>Day:</strong> {{ getDate(selectedConsultation.dateTime) }}</p>
-          <p><strong>Time:</strong> {{ getTime(selectedConsultation.dateTime) }}</p>
-          <p><strong>Details:</strong> {{ selectedConsultation.details || 'No details provided.' }}</p>
+        <div *ngIf="selectedConsultation" class="modal-content">
+          <div class="detail-row">
+            <ion-icon name="person-outline"></ion-icon>
+            <div>
+              <span class="label">Doctor</span>
+              <span class="value">Dr. {{ selectedConsultation.doctor_name }}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <ion-icon name="person-outline"></ion-icon>
+            <div>
+              <span class="label">Patient</span>
+              <span class="value">{{ selectedConsultation.patient_name }}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <div>
+              <span class="label">Date</span>
+              <span class="value">{{ getDate(selectedConsultation.dateTime) }}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <ion-icon name="time-outline"></ion-icon>
+            <div>
+              <span class="label">Time</span>
+              <span class="value">{{ getTime(selectedConsultation.dateTime) }}</span>
+            </div>
+          </div>
+          <div class="consultation-details">
+            <div class="label">Consultation Notes</div>
+            <p class="details-text">{{ selectedConsultation.details || 'No details provided.' }}</p>
+          </div>
         </div>
-        <div *ngIf="!selectedConsultation">
+        <div *ngIf="!selectedConsultation" class="empty-state">
+          <ion-icon name="alert-circle-outline"></ion-icon>
           <p>No consultation selected.</p>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
-    <!--Medical File section-->
-    <div class="medical-file-container">
-      <ion-item *ngIf="role === 'patient'">
-        <ion-button expand="block" (click)="downloadMedicalFile()">
-          Download Medical File
-        </ion-button>
-      </ion-item>
-    </div>
-  <!-- Doctor Appointments -->
-  <div *ngIf="role === 'doctor'" class="calendar-container">
-    <p class="calendar-title">Appointments Calendar</p>
-    <ion-datetime presentation="date" value="{{date}}" [highlightedDates]="highlightedDates" class="force-light-mode" (ionChange)="onDateChange($event)" firstDayOfWeek="1" locale="en-US">
-      <!-- Dummy comment to force Angular to recognize this as a non-self-closing tag -->
-    </ion-datetime>
-    <ion-content class="ion-padding">
-      <ion-modal [isOpen]="isModalOpen">
-        <ng-template>
-          <ion-header>
-            <ion-toolbar>
-              <ion-title>Appointments List</ion-title>
-              <ion-buttons slot="end">
-                <ion-button (click)="setOpen(false)">Close</ion-button>
-              </ion-buttons>
-            </ion-toolbar>
-          </ion-header>
-          <ion-content class="ion-padding">
-            <h1>
-              {{formatDate(selectedDate)}}
-            </h1>
-            <ion-button
-              *ngIf="selectedDate"
-              (click)="toggleDayOff(selectedDate)"
-              [color]="daysOff.includes(selectedDate.toISOString().split('T')[0]) ? 'danger' : 'primary'"
-            >
-              {{ daysOff.includes(selectedDate.toISOString().split('T')[0]) ? 'Mark as Working Day' : 'Mark as Day Off' }}
+
+  <!-- Doctor's Appointments Modal -->
+  <ion-modal [isOpen]="isAppointmentModalOpen && role === 'doctor'" [canDismiss]="true" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75, 1]">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Appointments List</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setAppointmentModalOpen(false)">
+              <ion-icon name="close-outline"></ion-icon>
             </ion-button>
-            <ion-list>
-              <ng-container *ngIf="selectedDayAppointments.length > 0; else noAppointments">
-                <ng-container *ngFor="let appointment of selectedDayAppointments">
-                  <ion-item class="calendar-event" [ngClass]="getStatusClass(appointment.status)">
-                    <ion-label>
-                      <p>
-                        Patient: {{ appointment.patient_name }}<br>
-                        Time: {{ getTime(appointment.dateTime) }}<br>
-                        Status: {{ appointment.status }}
-                      </p>
-                    </ion-label>
-                  </ion-item>
-                </ng-container>
-              </ng-container>
-              <ng-template #noAppointments>
-                <ion-item lines="none">
-                  <ion-label class="no-appointments">No appointments on this date</ion-label>
-                </ion-item>
-              </ng-template>
-            </ion-list>
-          </ion-content>
-        </ng-template>
-      </ion-modal>
-    </ion-content>
-  </div>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <h2 class="date-header">
+          {{formatDate(selectedDate)}}
+        </h2>
+
+        <ion-button
+          *ngIf="selectedDate"
+          (click)="toggleDayOff(selectedDate)"
+          [color]="daysOff.includes(selectedDate.toISOString().split('T')[0]) ? 'danger' : 'primary'"
+          expand="block"
+          class="day-toggle-button"
+        >
+          <ion-icon [name]="daysOff.includes(selectedDate.toISOString().split('T')[0]) ? 'calendar-outline' : 'calendar-clear-outline'" slot="start"></ion-icon>
+          {{ daysOff.includes(selectedDate.toISOString().split('T')[0]) ? 'Mark as Working Day' : 'Mark as Day Off' }}
+        </ion-button>
+
+        <div class="appointments-list">
+          <ng-container *ngIf="selectedDayAppointments.length > 0; else noAppointments">
+            <ion-card *ngFor="let appointment of selectedDayAppointments" class="appointment-card" [ngClass]="getStatusClass(appointment.status)">
+              <ion-card-content>
+                <div class="card-header">
+                  <ion-icon name="person-outline"></ion-icon>
+                  <span class="patient-name">{{ appointment.patient_name }}</span>
+                </div>
+                <div class="card-details">
+                  <div class="detail-item">
+                    <ion-icon name="time-outline"></ion-icon>
+                    <span>{{ getTime(appointment.dateTime) }}</span>
+                  </div>
+                  <div class="detail-item status">
+                    <ion-icon name="ellipse" [ngClass]="getStatusIconClass(appointment.status)"></ion-icon>
+                    <span>{{ appointment.status }}</span>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ng-container>
+          <ng-template #noAppointments>
+            <div class="empty-state">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <p>No appointments on this date</p>
+            </div>
+          </ng-template>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

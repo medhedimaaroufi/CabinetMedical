@@ -1,8 +1,5 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" text=""></ion-back-button>
-    </ion-buttons>
+  <ion-toolbar>
     <ion-title>Search Medical Services & Doctors</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -27,18 +24,6 @@
 
   <!-- Services Section -->
   <div *ngIf="segment === 'services'" class="section">
-    <ion-item lines="none">
-      <ion-select
-        [formControl]="serviceCategoryControl"
-        placeholder="Select Category"
-        interface="action-sheet"
-      >
-        <ion-select-option value="">All Categories</ion-select-option>
-        <ion-select-option *ngFor="let category of categories" [value]="category">
-          {{ category }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
     <ion-card
       *ngFor="let service of filteredServices"
       class="service-card"

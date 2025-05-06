@@ -1,0 +1,1022 @@
+// app.component.ts
+import { Component } from '@angular/core';
+import { Platform } from '@ionic/angular';
+import { SplashScreen } from '@capacitor/splash-screen';
+import { StatusBar } from '@capacitor/status-bar';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: 'app.component.html',
+  styleUrls: ['app.component.scss']
+})
+export class AppComponent {
+  constructor(
+    private platform: Platform
+  ) {
+    this.initializeApp();
+  }
+
+  initializeApp() {
+    this.platform.ready().then(() => {
+      StatusBar.setBackgroundColor({ color: '#3880ff' });
+      SplashScreen.hide();
+    });
+  }
+}
+
+// app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { RouteReuseStrategy } from '@angular/router';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot({
+      mode: 'md',
+      animated: true
+    }),
+    AppRoutingModule,
+    HttpClientModule
+  ],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+
+// app-routing.module.ts
+import { NgModule } from '@angular/core';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [
+  {
+    path: '',
+    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+  }
+];
+
+@NgModule({
+  imports: [
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+  ],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}
+
+// tabs/tabs-routing.module.ts
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { TabsPage } from './tabs.page';
+
+const routes: Routes = [
+  {
+    path: 'tabs',
+    component: TabsPage,
+    children: [
+      {
+        path: 'home',
+        loadChildren: () => import('../pages/home/home.module').then(m => m.HomePageModule)
+      },
+      {
+        path: 'search',
+        loadChildren: () => import('../pages/search/search.module').then(m => m.SearchPageModule)
+      },
+      {
+        path: 'appointment',
+        loadChildren: () => import('../pages/appointment/appointment.module').then(m => m.AppointmentPageModule)
+      },
+      {
+        path: 'notifications',
+        loadChildren: () => import('../pages/notifications/notifications.module').then(m => m.NotificationsPageModule)
+      },
+      {
+        path: 'profile',
+        loadChildren: () => import('../pages/profile/profile.module').then(m => m.ProfilePageModule)
+      },
+      {
+        path: 'services',
+        loadChildren: () => import('../pages/services/services.module').then(m => m.ServicesPageModule)
+      },
+      {
+        path: 'doctors',
+        loadChildren: () => import('../pages/doctors/doctors.module').then(m => m.DoctorsPageModule)
+      },
+      {
+        path: '',
+        redirectTo: '/tabs/home',
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: '',
+    redirectTo: '/tabs/home',
+    pathMatch: 'full'
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+})
+export class TabsPageRoutingModule {}
+
+// tabs/tabs.module.ts
+import { IonicModule } from '@ionic/angular';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { TabsPageRoutingModule } from './tabs-routing.module';
+import { TabsPage } from './tabs.page';
+
+@NgModule({
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    TabsPageRoutingModule
+  ],
+  declarations: [TabsPage]
+})
+export class TabsPageModule {}
+
+// tabs/tabs.page.html
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="home">
+      <ion-icon name="home-outline"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="search">
+      <ion-icon name="search-outline"></ion-icon>
+      <ion-label>Search</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="appointment">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <ion-label>Appointment</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="notifications">
+      <ion-icon name="notifications-outline"></ion-icon>
+      <ion-label>Notifications</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="profile">
+      <ion-icon name="person-outline"></ion-icon>
+      <ion-label>Profile</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+
+// tabs/tabs.page.scss
+ion-tab-bar {
+  --background: #ffffff;
+  box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.07);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding-bottom: 8px;
+  padding-top: 8px;
+  height: 65px;
+}
+
+ion-tab-button {
+  --background-focused: #e1f5fe;
+  --color: #7b7b7b;
+  --color-selected: #2196f3;
+
+  &::before {
+    display: none;
+  }
+}
+
+// models/doctor.model.ts
+export interface Doctor {
+  id: number;
+  name: string;
+  image: string;
+  speciality: string;
+  rating: number;
+  reviews: number;
+  experience: number;
+  availability: string;
+}
+
+// services/auth.service.ts
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
+  isLoggedIn$ = this.isLoggedInSubject.asObservable();
+
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor() {
+    // For demo purposes, check if user is already logged in
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      this.currentUserSubject.next(JSON.parse(savedUser));
+      this.isLoggedInSubject.next(true);
+    }
+  }
+
+  login(email: string, password: string): Promise<boolean> {
+    // Mock login for demo
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const mockUser: User = {
+          id: 1,
+          name: 'John Doe',
+          email: email,
+          avatar: 'https://i.pravatar.cc/150?u=john'
+        };
+        this.currentUserSubject.next(mockUser);
+        this.isLoggedInSubject.next(true);
+        localStorage.setItem('currentUser', JSON.stringify(mockUser));
+        resolve(true);
+      }, 1000);
+    });
+  }
+
+  logout(): void {
+    this.currentUserSubject.next(null);
+    this.isLoggedInSubject.next(false);
+    localStorage.removeItem('currentUser');
+  }
+}
+
+// services/doctor.service.ts
+import { Injectable } from '@angular/core';
+import { Doctor } from '../models/doctor.model';
+import { Observable, of } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DoctorService {
+  private doctors: Doctor[] = [
+    {
+      id: 1,
+      name: 'Dr. Sarah Johnson',
+      image: 'https://i.pravatar.cc/150?u=sarah',
+      speciality: 'Cardiology',
+      rating: 4.9,
+      reviews: 124,
+      experience: 8,
+      availability: 'Available Today'
+    },
+    {
+      id: 2,
+      name: 'Dr. Michael Chen',
+      image: 'https://i.pravatar.cc/150?u=michael',
+      speciality: 'Dermatology',
+      rating: 4.7,
+      reviews: 98,
+      experience: 12,
+      availability: 'Available Tomorrow'
+    },
+    {
+      id: 3,
+      name: 'Dr. Emily Williams',
+      image: 'https://i.pravatar.cc/150?u=emily',
+      speciality: 'Pediatrics',
+      rating: 4.8,
+      reviews: 156,
+      experience: 10,
+      availability: 'Available Today'
+    },
+    {
+      id: 4,
+      name: 'Dr. Daniel Rodriguez',
+      image: 'https://i.pravatar.cc/150?u=daniel',
+      speciality: 'Neurology',
+      rating: 4.6,
+      reviews: 87,
+      experience: 15,
+      availability: 'Available in 2 days'
+    },
+    {
+      id: 5,
+      name: 'Dr. Lisa Turner',
+      image: 'https://i.pravatar.cc/150?u=lisa',
+      speciality: 'Orthopedics',
+      rating: 4.9,
+      reviews: 210,
+      experience: 14,
+      availability: 'Available Today'
+    }
+  ];
+
+  constructor() { }
+
+  getDoctors(): Observable<Doctor[]> {
+    return of(this.doctors);
+  }
+
+  getDoctorById(id: number): Observable<Doctor | undefined> {
+    return of(this.doctors.find(doctor => doctor.id === id));
+  }
+
+  getSpecialities(): Observable<string[]> {
+    const specialities = [...new Set(this.doctors.map(doctor => doctor.speciality))];
+    return of(specialities);
+  }
+}
+
+// pages/home/home.module.ts
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { HomePage } from './home.page';
+import { HomePageRoutingModule } from './home-routing.module';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    HomePageRoutingModule
+  ],
+  declarations: [HomePage]
+})
+export class HomePageModule {}
+
+// pages/home/home-routing.module.ts
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { HomePage } from './home.page';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: HomePage,
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class HomePageRoutingModule {}
+
+// pages/home/home.page.html
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="logo">MediCare</div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="!(authService.isLoggedIn$ | async)" (click)="signIn()">
+        Sign In
+      </ion-button>
+      <ion-avatar *ngIf="(authService.isLoggedIn$ | async)" class="avatar-small">
+        <img [src]="(authService.currentUser$ | async)?.avatar || 'assets/avatar-placeholder.png'" />
+      </ion-avatar>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="welcome-header">
+    <h1>Find Your Perfect Doctor</h1>
+    <p>Discover the best doctors for your needs</p>
+  </div>
+
+  <!-- Services Section -->
+  <div class="section-header">
+    <h2>Services</h2>
+    <ion-button fill="clear" [routerLink]="['/tabs/services']">
+      See All
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-button>
+  </div>
+
+  <ion-slides [options]="slideOptions" class="service-slides">
+    <ion-slide *ngFor="let service of services">
+      <div class="service-card">
+        <div class="service-icon">
+          <ion-icon [name]="getServiceIcon(service)"></ion-icon>
+        </div>
+        <div class="service-name">{{ service }}</div>
+      </div>
+    </ion-slide>
+  </ion-slides>
+
+  <!-- Doctors Section -->
+  <div class="section-header">
+    <h2>Top Doctors</h2>
+    <ion-button fill="clear" [routerLink]="['/tabs/doctors']">
+      See All
+      <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="doctor-cards">
+    <div class="doctor-card" *ngFor="let doctor of doctors">
+      <div class="doctor-avatar">
+        <img [src]="doctor.image" alt="{{ doctor.name }}">
+        <div class="doctor-status" [class.available]="doctor.availability.includes('Today')"></div>
+      </div>
+      <div class="doctor-info">
+        <h3>{{ doctor.name }}</h3>
+        <p class="speciality">{{ doctor.speciality }}</p>
+        <div class="rating">
+          <ion-icon name="star" color="warning"></ion-icon>
+          <span>{{ doctor.rating }} ({{ doctor.reviews }})</span>
+        </div>
+        <div class="availability">{{ doctor.availability }}</div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+// pages/home/home.page.scss
+ion-header {
+  ion-toolbar {
+    --background: #ffffff;
+    .logo {
+      font-weight: 700;
+      color: #2196f3;
+      font-size: 22px;
+    }
+  }
+}
+
+.welcome-header {
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 24px 0 16px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  ion-button {
+    --color: #2196f3;
+    --padding-start: 4px;
+    --padding-end: 0;
+    font-weight: 500;
+    font-size: 14px;
+  }
+}
+
+.service-slides {
+  margin-bottom: 16px;
+}
+
+.service-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f7fbff;
+  border-radius: 16px;
+  width: 100px;
+  height: 110px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  .service-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e1f5fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+
+    ion-icon {
+      font-size: 24px;
+      color: #2196f3;
+    }
+  }
+
+  .service-name {
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+  }
+}
+
+.doctor-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.doctor-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+
+  .doctor-avatar {
+    position: relative;
+    margin-right: 16px;
+
+    img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .doctor-status {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #f44336;
+      border: 2px solid white;
+
+      &.available {
+        background: #4caf50;
+      }
+    }
+  }
+
+  .doctor-info {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .speciality {
+      color: #666;
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+
+      ion-icon {
+        margin-right: 4px;
+      }
+
+      span {
+        font-size: 14px;
+        color: #333;
+      }
+    }
+
+    .availability {
+      font-size: 12px;
+      color: #2196f3;
+      font-weight: 500;
+    }
+  }
+}
+
+.avatar-small {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+}
+
+// pages/home/home.page.ts
+import { Component, OnInit } from '@angular/core';
+import { DoctorService } from '../../services/doctor.service';
+import { AuthService } from '../../services/auth.service';
+import { Doctor } from '../../models/doctor.model';
+import { AlertController } from '@ionic/angular';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss'],
+})
+export class HomePage implements OnInit {
+  services: string[] = [];
+  doctors: Doctor[] = [];
+
+  slideOptions = {
+    slidesPerView: 3.5,
+    spaceBetween: 10,
+    freeMode: true
+  };
+
+  constructor(
+    private doctorService: DoctorService,
+    public authService: AuthService,
+    private alertCtrl: AlertController
+  ) {}
+
+  ngOnInit() {
+    this.loadServices();
+    this.loadDoctors();
+  }
+
+  loadServices() {
+    this.doctorService.getSpecialities().subscribe(specialities => {
+      this.services = specialities;
+    });
+  }
+
+  loadDoctors() {
+    this.doctorService.getDoctors().subscribe(doctors => {
+      this.doctors = doctors.slice(0, 3);
+    });
+  }
+
+  getServiceIcon(service: string): string {
+    const icons: { [key: string]: string } = {
+      'Cardiology': 'heart-outline',
+      'Dermatology': 'body-outline',
+      'Pediatrics': 'people-outline',
+      'Neurology': 'brain-outline',
+      'Orthopedics': 'fitness-outline',
+      'default': 'medical-outline'
+    };
+
+    return icons[service] || icons['default'];
+  }
+
+  async signIn() {
+    const alert = await this.alertCtrl.create({
+      header: 'Sign In',
+      inputs: [
+        {
+          name: 'email',
+          type: 'email',
+          placeholder: 'Email'
+        },
+        {
+          name: 'password',
+          type: 'password',
+          placeholder: 'Password'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Sign In',
+          handler: (data) => {
+            this.authService.login(data.email, data.password);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+}
+
+// pages/search/search.module.ts
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import { SearchPageRoutingModule } from './search-routing.module';
+import { SearchPage } from './search.page';
+
+@NgModule({
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    SearchPageRoutingModule
+  ],
+  declarations: [SearchPage]
+})
+export class SearchPageModule {}
+
+// pages/search/search-routing.module.ts
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { SearchPage } from './search.page';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: SearchPage
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class SearchPageRoutingModule {}
+
+// pages/search/search.page.html
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Search</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-searchbar placeholder="Search doctors, services..." animated></ion-searchbar>
+
+  <div class="search-filters">
+    <ion-chip class="filter-chip active">
+      <ion-label>All</ion-label>
+    </ion-chip>
+    <ion-chip class="filter-chip" *ngFor="let service of services">
+      <ion-label>{{ service }}</ion-label>
+    </ion-chip>
+  </div>
+
+  <div class="search-results">
+    <p class="results-count">Found {{ doctors.length }} doctors</p>
+
+    <div class="doctor-cards">
+      <div class="doctor-card" *ngFor="let doctor of doctors">
+        <div class="doctor-avatar">
+          <img [src]="doctor.image" alt="{{ doctor.name }}">
+          <div class="doctor-status" [class.available]="doctor.availability.includes('Today')"></div>
+        </div>
+        <div class="doctor-info">
+          <h3>{{ doctor.name }}</h3>
+          <p class="speciality">{{ doctor.speciality }}</p>
+          <div class="rating">
+            <ion-icon name="star" color="warning"></ion-icon>
+            <span>{{ doctor.rating }} ({{ doctor.reviews }})</span>
+          </div>
+          <div class="experience">{{ doctor.experience }} years experience</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+// pages/search/search.page.scss
+ion-header {
+  ion-toolbar {
+    --background: #ffffff;
+    ion-title {
+      font-weight: 600;
+    }
+  }
+}
+
+ion-searchbar {
+  --border-radius: 16px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --placeholder-color: #999;
+  --background: #ffffff;
+  margin-bottom: 16px;
+}
+
+.search-filters {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 0 16px 0;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-chip {
+    --background: #f7fbff;
+    --color: #666;
+    margin-right: 8px;
+
+    &.active {
+      --background: #2196f3;
+      --color: #ffffff;
+    }
+  }
+}
+
+.results-count {
+  color: #666;
+  font-size: 14px;
+  margin: 16px 0;
+}
+
+.doctor-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.doctor-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+
+  .doctor-avatar {
+    position: relative;
+    margin-right: 16px;
+
+    img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .doctor-status {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #f44336;
+      border: 2px solid white;
+
+      &.available {
+        background: #4caf50;
+      }
+    }
+  }
+
+  .doctor-info {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .speciality {
+      color: #666;
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+
+      ion-icon {
+        margin-right: 4px;
+      }
+
+      span {
+        font-size: 14px;
+        color: #333;
+      }
+    }
+
+    .experience {
+      font-size: 12px;
+      color: #666;
+    }
+  }
+}
+
+// pages/search/search.page.ts
+import { Component, OnInit } from '@angular/core';
+import { DoctorService } from '../../services/doctor.service';
+import { Doctor } from '../../models/doctor.model';
+
+@Component({
+  selector: 'app-search',
+  templateUrl: './search.page.html',
+  styleUrls: ['./search.page.scss'],
+})
+export class SearchPage implements OnInit {
+  services: string[] = [];
+  doctors: Doctor[] = [];
+
+  constructor(private doctorService: DoctorService) { }
+
+  ngOnInit() {
+    this.loadServices();
+    this.loadDoctors();
+  }
+
+  loadServices() {
+    this.doctorService.getSpecialities().subscribe(specialities => {
+      this.services = specialities;
+    });
+  }
+
+  loadDoctors() {
+    this.doctorService.getDoctors().subscribe(doctors => {
+      this.doctors = doctors;
+    });
+  }
+}
+
+// Other page stubs for completeness
+
+// pages/appointment/appointment.page.html
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Appointments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="segment-wrapper">
+    <ion-segment value="upcoming">
+      <ion-segment-button value="upcoming">
+        <ion-label>Upcoming</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="past">
+        <ion-label>Past</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <div class="empty-state">
+    <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
+    <h3>No Appointments</h3>
+    <p>You don't have any upcoming appointments</p>
+    <ion-button expand="block" shape="round">
+      Book Appointment
+    </ion-button>
+  </div>
+</ion-content>
+
+// pages/notifications/notifications.page.html
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Notifications</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="notification-list">
+    <div class="notification-item">
+      <div class="notification-icon">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+      <div class="notification-content">
+        <h3>Appointment Reminder</h3>
+        <p>Your appointment with Dr. Sarah Johnson is tomorrow at 10:00 AM</p>
+        <span class="notification-time">2 hours ago</span>
+      </div>
+    </div>
+
+    <div class="notification-item">
+      <div class="notification-icon">
+        <ion-icon name="wallet-outline"></ion-icon>
+      </div>
+      <div class="notification-content">
+        <h3>Payment Confirmation</h3>
+        <p>Your payment of $120 for Dr. Michael Chen's appointment has been processed</p>
+        <span class="notification-time">Yesterday</span>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+// pages/profile/

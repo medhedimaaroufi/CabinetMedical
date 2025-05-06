@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ModalOptions } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { DoctorProfileModalComponent } from '../doctor-profile-modal/doctor-profile-modal.component';
 
 interface Doctor {
   id: string;
@@ -19,7 +20,7 @@ interface Doctor {
   imports: [
     IonicModule,
     FormsModule,
-    CommonModule
+    CommonModule,
   ],
   standalone: true
 })
@@ -31,6 +32,7 @@ export class DoctorFilterModalComponent {
   nameFilter: string = '';
   addressFilter: string = '';
   filteredDoctors: Doctor[] = [];
+  specialityFilter: string = '';
 
   constructor(private modalController: ModalController) {}
 
@@ -43,12 +45,24 @@ export class DoctorFilterModalComponent {
   filterDoctors() {
     const nameTerm = this.nameFilter.toLowerCase();
     const addressTerm = this.addressFilter.toLowerCase();
+    const specialty = this.specialityFilter.toLowerCase();
 
-    this.filteredDoctors = this.doctors.filter(doctor =>
-      (doctor.name.toLowerCase().includes(nameTerm) ||
-        doctor.email.toLowerCase().includes(nameTerm)) &&
-      (!addressTerm || doctor.address.toLowerCase().includes(addressTerm))
-    );
+    console.log('Name Filter:', nameTerm, 'Address Filter:', addressTerm, 'Specialty Filter:', specialty);
+
+    this.filteredDoctors = this.doctors.filter(doctor => {
+      const matchesName =
+        !nameTerm ||
+        doctor.name.toLowerCase().includes(nameTerm) ||
+        doctor.email.toLowerCase().includes(nameTerm);
+
+      const matchesAddress =
+        !addressTerm || doctor.address.toLowerCase().includes(addressTerm);
+
+      const matchesSpecialty =
+        !specialty || doctor.speciality?.toLowerCase().includes(specialty);
+
+      return matchesName && matchesAddress && matchesSpecialty;
+    });
   }
 
   onNameFilterChange() {
@@ -57,6 +71,27 @@ export class DoctorFilterModalComponent {
 
   onAddressFilterChange() {
     this.filterDoctors();
+  }
+
+  onSpecialityFilterChange() {
+    this.filterDoctors();
+  }
+
+  async openModalProfile(doctor: Doctor) {
+    const modalOptions = {
+      component: DoctorProfileModalComponent,
+      componentProps: {
+        doctor: doctor
+      }
+    } as ModalOptions;
+
+    const modal = await this.modalController.create(modalOptions);
+    await modal.present();
+  }
+
+  selectDoctor(doctor: Doctor) {
+    console.log('Selected Doctor:', doctor);
+    this.openModalProfile(doctor);
   }
 
   applyFilters() {

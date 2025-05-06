@@ -1,66 +1,75 @@
-<ion-content class="send-docs-container">
-  <ion-header>
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/home"></ion-back-button>
-      </ion-buttons>
-      <ion-title>Send Medical Documents</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <a href="/home?tab=profile">
+        <ion-button>
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </ion-button>
+      </a>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-  <div class="logo-container">
-    <img src="assets/icon/Docly.png" alt="Docly Logo" class="logo" />
+<ion-content [fullscreen]="true">
+  <!-- Services Section -->
+  <div class="section-container">
+    <div class="section-title">
+      <ion-icon name="medkit-outline"></ion-icon>
+      <span>Services</span>
+      <ion-button fill="clear" class="show-more" routerLink="/services">
+        Show More
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+    <ng-container *ngIf="services.length > 0; else noServices">
+      <div class="services-container">
+        <div class="service-card" *ngFor="let service of services" (click)="viewServiceDetails(service)">
+          <ion-icon name="medkit-outline"></ion-icon>
+          <h3>{{ service }}</h3>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #noServices>
+      <div class="empty-state">
+        <ion-icon name="medkit-outline"></ion-icon>
+        <p>No services available</p>
+      </div>
+    </ng-template>
   </div>
 
-  <ion-card class="send-docs-card">
-    <ion-card-content>
-      <form (submit)="uploadDocument($event)" (reset)="resetForm()">
-        <!-- Patient Selection (for doctors/admins) -->
-        <ion-item *ngIf="userRole === 'doctor' || userRole === 'admin'">
-          <ion-label position="stacked">Select Patient</ion-label>
-          <ion-select [(ngModel)]="patientId" name="patientId" required>
-            <ion-select-option *ngFor="let patient of patients" [value]="patient.id">
-              {{ patient.name }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
+  <!-- Doctors Section -->
+  <div class="section-container">
+    <div class="section-title">
+      <ion-icon name="people-outline"></ion-icon>
+      <span>Doctors</span>
+      <ion-button fill="clear" class="show-more" routerLink="/doctors">
+        Show More
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
 
-        <!-- File Input -->
-        <ion-item>
-          <ion-label position="stacked">Select Document</ion-label>
-          <input type="file" (change)="onFileChange($event)" accept=".pdf,.jpg,.jpeg,.png" />
-        </ion-item>
-        <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
+    <ng-container *ngIf="doctors.length > 0; else noDoctors">
+      <ion-card *ngFor="let doctor of doctors" class="doctor-card" (click)="viewDoctorDetails(doctor)">
+        <ion-card-content>
+          <ion-avatar slot="start">
+            <div class="avatar-placeholder">{{ getInitials(doctor.name) }}</div>
+          </ion-avatar>
+          <div class="doctor-info">
+            <h3>{{ doctor.name }}</h3>
+            <p>{{ doctor.speciality }}</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
 
-        <!-- Description -->
-        <ion-item>
-          <ion-label position="stacked">Description</ion-label>
-          <ion-input
-            type="text"
-            placeholder="Enter document description"
-            [(ngModel)]="description"
-            name="description"
-            required
-          ></ion-input>
-        </ion-item>
-
-        <!-- Upload Progress -->
-        <ion-text *ngIf="uploadProgress > 0 && !loading">
-          Upload Progress: {{ uploadProgress }}%
-        </ion-text>
-
-        <!-- Loading Spinner -->
-        <ion-spinner *ngIf="loading" class="loading-spinner"></ion-spinner>
-
-        <!-- Success Message -->
-        <ion-text color="success" *ngIf="successMessage">{{ successMessage }}</ion-text>
-
-        <!-- Buttons -->
-        <div class="button-group">
-          <ion-button type="submit" [disabled]="loading" class="upload-button">Upload</ion-button>
-          <ion-button type="reset" [disabled]="loading" class="reset-button">Reset</ion-button>
-        </div>
-      </form>
-    </ion-card-content>
-  </ion-card>
+    <ng-template #noDoctors>
+      <div class="empty-state">
+        <ion-icon name="people-outline"></ion-icon>
+        <p>No doctors available</p>
+      </div>
+    </ng-template>
+  </div>
 </ion-content>
