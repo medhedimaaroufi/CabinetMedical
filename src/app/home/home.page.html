@@ -9,7 +9,8 @@
   <ion-tab tab="appointments">
     <div id="appointments-page" class="content">
       <app-login *ngIf="!loggedIn"></app-login>
-      <app-appointments *ngIf="loggedIn"></app-appointments>
+      <app-appointments *ngIf="role === 'doctor'"></app-appointments>
+      <app-appointments-patients *ngIf="role === 'patient'"></app-appointments-patients>
     </div>
   </ion-tab>
   <ion-tab tab="search">

@@ -1,13 +1,56 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>appointments</ion-title>
+    <ion-title>Appointments</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">appointments</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="content-container">
+    <div class="section-title">
+      <ion-icon name="calendar-outline" aria-label="Appointments"></ion-icon>
+      <span>Your Appointments</span>
+    </div>
+
+    <!-- Appointments List -->
+    <ng-container *ngIf="appointments && appointments.length > 0; else noAppointments">
+      <ion-card *ngFor="let appointment of appointments; trackBy: trackById" class="appointment-card">
+        <ion-card-content>
+          <div class="card-header">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span class="appointment-title">Appointment #{{ appointment.id }}</span>
+            <div class="appointment-time">{{ formatTime(appointment.dateTime) }}</div>
+          </div>
+          <div class="card-details">
+            <p class="appointment-detail"><strong>Calendar Slot:</strong> {{ appointment.calendarSlotId }}</p>
+            <p class="appointment-detail"><strong>Patient ID:</strong> {{ appointment.patient_id }}</p>
+            <p class="appointment-detail"><strong>Status:</strong> {{ appointment.status }}</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+    <!-- Empty State -->
+    <ng-template #noAppointments>
+      <div class="empty-state" *ngIf="!isLoading">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <p>No appointments scheduled yet.</p>
+      </div>
+    </ng-template>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <ion-spinner color="primary"></ion-spinner>
+      <p>Loading appointments...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="errorMessage">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <p>{{ errorMessage }}</p>
+      <ion-button fill="outline" size="small" >
+        Retry
+        <ion-icon name="refresh-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
 </ion-content>

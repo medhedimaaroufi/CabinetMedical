@@ -25,6 +25,7 @@ import { SearchPage } from '../search/search.page';
 import { PatientDashboardPage } from '../patient-dashboard/patient-dashboard.page';
 import { AppointmentsPage } from '../appointments/appointments.page';
 import { NgIf } from '@angular/common';
+import {AppointmentsPatientsPage} from "../appointments-patients/appointments-patients.page";
 import {DoctorDashboardPage} from "../doctor-dashboard/doctor-dashboard.page";
 import {AdminDashboardPage} from "../admin-dashboard/admin-dashboard.page";
 import {CookieService} from "ngx-cookie-service";
@@ -46,6 +47,8 @@ import {LoginPage} from "../login/login.page";
     SearchPage,
     PatientDashboardPage,
     AppointmentsPage,
+    NgIf,
+    AppointmentsPatientsPage,
     IonImg,
     DoctorDashboardPage,
     AdminDashboardPage,
