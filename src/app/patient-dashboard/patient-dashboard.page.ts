@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { DoctorService } from '../../services/doctor/doctor.service';
 import {DoctorProfileModalComponent} from "../search/doctor-profile-modal/doctor-profile-modal.component";
 import {Doctor} from "../../models/Doctor";
+import {IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonTitle, IonToolbar} from "@ionic/angular/standalone";
+import {AuthService} from "../../services/auth/auth.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-patient-dashboard',
@@ -17,9 +20,13 @@ export class PatientDashboardPage implements OnInit {
   services: string[] = [];
   doctors: any[] = [];
 
-  constructor(private doctorService: DoctorService, private modalController: ModalController) {}
+  constructor(private doctorService: DoctorService, private modalController: ModalController, private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
+    if (!this.authService.getToken()) {
+      this.router.navigate(['/signin']);
+      return;
+    }
     this.fetchDoctors();
   }
 
@@ -64,5 +71,10 @@ export class PatientDashboardPage implements OnInit {
 
     const modal = await this.modalController.create(modalOptions);
     await modal.present();
+  }
+
+  logout() {
+    this.authService.logout();
+    window.location.reload();
   }
 }
