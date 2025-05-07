@@ -81,7 +81,7 @@ export class ProfilePage implements OnInit {
     rateChange: 0,
     avgDuration: 0,
     durationChange: 0,
-    chartData: [{ label: 'Fri', value: 25 }],
+    chartData: [{ label: 'Thursday', value: 25 }],
     appointmentTypes: [
       { name: 'Follow-up', percentage: 60, startAngle: 0, endAngle: 216, color: '#4CAF50' },
       { name: 'New Patient', percentage: 40, startAngle: 216, endAngle: 360, color: '#2196F3' }
