@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Doctor Profile</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="section-container">
+    <ng-container *ngIf="patient; else loadingOrError">
+      <ion-card class="doctor-card">
+        <ion-card-content>
+          <div class="doctor-header">
+            <ion-avatar>
+              <div class="avatar-placeholder">{{ getInitials(patient.name) }}</div>
+            </ion-avatar>
+            <div class="doctor-info">
+              <h3>Dr. {{ patient.name }}</h3>
+            </div>
+          </div>
+          <div class="doctor-details">
+            <div class="detail-item">
+              <ion-icon name="mail-outline"></ion-icon>
+              <span>{{ patient.email }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="location-outline"></ion-icon>
+              <span>{{ patient.address }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="call-outline"></ion-icon>
+              <span>{{ patient.phone }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ patient.dob }}</span>
+            </div>
+          </div>
+          <ion-button expand="block" color="primary" href="{{environment.backendUrl+'/api/patient/get-document?pid='+patient._id}}'}">
+            Download Medical Document
+            <ion-icon name="download" slot="end"></ion-icon>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+    <ng-template #loadingOrError>
+      <ng-container *ngIf="error; else loading">
+        <div class="empty-state">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>{{ error }}</p>
+        </div>
+      </ng-container>
+      <ng-template #loading>
+        <div class="loading-container">
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+        </div>
+      </ng-template>
+    </ng-template>
+  </div>
+</ion-content>

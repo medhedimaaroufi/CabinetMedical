@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/services/user/user.service';
-import { IonicModule } from "@ionic/angular";
+import {IonicModule, ModalController, ModalOptions} from "@ionic/angular";
 import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { Appointment } from "../../models/Appointment";
 import { AppointmentService } from "../../services/appointment/appointment.service";
@@ -9,6 +9,9 @@ import {Consultation} from "../../models/Consultation";
 import {ConsultationService} from "../../services/consultation/consultation.service";
 import {CalendarService} from "../../services/calendar/calendar.service";
 import {FormsModule} from "@angular/forms";
+import {PatientProfileModalComponent} from "./patient-profile-modal/patient-profile-modal.component";
+import {Doctor} from "../../models/Doctor";
+import {Patient} from "../../models/Patient";
 
 @Component({
   selector: 'app-profile',
@@ -87,7 +90,8 @@ export class ProfilePage implements OnInit {
     private appointmentService: AppointmentService,
     private medicalFileService: MedicalFileService,
     private consultationService: ConsultationService,
-    private calendarService: CalendarService
+    private calendarService: CalendarService,
+    private modalController: ModalController
   ) {
   }
 
@@ -102,7 +106,8 @@ export class ProfilePage implements OnInit {
         this.getConsultations();
         if (this.role === 'doctor') {
           this.fetchAvailability();
-          this.updateDoctorData(); // Initialize doctor-specific data
+          this.updateDoctorData();
+          this.getPatients();// Initialize doctor-specific data
         }
       },
       error: (err) => {
@@ -461,6 +466,16 @@ export class ProfilePage implements OnInit {
   }
 
   // New methods for doctor functionality
+  getPatients() {
+    this.userService.getPatients().subscribe(data => {
+      console.log('Raw API response:', data);
+      this.patientsList = Array.isArray(data) ? data : data.patients || [];
+      this.filteredPatients = this.patientsList;
+      console.log('Patients fetched:', this.patientsList);
+    });
+  }
+
+
   searchPatients() {
     this.filteredPatients = this.patientsList.filter(patient =>
       patient.name.toLowerCase().includes(this.patientSearchTerm.toLowerCase())
@@ -529,4 +544,17 @@ export class ProfilePage implements OnInit {
   }
 
   protected readonly Math = Math;
+
+  async selectPatient(patient: Patient) {
+    console.log('Patient ID:', patient._id, 'Type:', typeof patient._id);
+    const modalOptions = {
+      component: PatientProfileModalComponent,
+      componentProps: {
+        UserId: patient._id.toString()
+      }
+    } as ModalOptions;
+
+    const modal = await this.modalController.create(modalOptions);
+    await modal.present();
+  }
 }
