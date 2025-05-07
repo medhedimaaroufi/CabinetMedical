@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 62vh;
   padding: 5vh 5vw;
   background: #f8f9fa;
 }
@@ -26,12 +26,9 @@
 }
 
 .upload-button {
-  background-color: #007bff;
-  color: #fff;
   font-weight: bold;
   text-transform: uppercase;
   font-size: 1.2rem;
-  padding: 1rem;
   border-radius: 0.5rem;
   width: 100%;
   margin-top: 2vh;
@@ -45,12 +42,9 @@
 }
 
 .reset-button {
-  background-color: #6c757d;
-  color: #fff;
   font-weight: bold;
   text-transform: uppercase;
   font-size: 1.2rem;
-  padding: 1rem;
   border-radius: 0.5rem;
   width: 100%;
   margin-top: 1vh;

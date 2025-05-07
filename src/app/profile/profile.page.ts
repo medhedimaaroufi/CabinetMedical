@@ -9,6 +9,8 @@ import {Consultation} from "../../models/Consultation";
 import {ConsultationService} from "../../services/consultation/consultation.service";
 import {CalendarService} from "../../services/calendar/calendar.service";
 import {FormsModule} from "@angular/forms";
+import {environment} from "../../environments/environment";
+import {SendMedicalDocsPage} from "../send-medical-docs/send-medical-docs.page";
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +22,8 @@ import {FormsModule} from "@angular/forms";
     NgIf,
     NgForOf,
     NgClass,
-    FormsModule
+    FormsModule,
+    SendMedicalDocsPage
   ]
 })
 export class ProfilePage implements OnInit {
@@ -81,6 +84,7 @@ export class ProfilePage implements OnInit {
       { name: 'New Patient', percentage: 40, startAngle: 216, endAngle: 360, color: '#2196F3' }
     ]
   };
+  patient_id: string = localStorage.getItem("id") || '';
 
   constructor(
     private userService: UserService,
@@ -529,4 +533,5 @@ export class ProfilePage implements OnInit {
   }
 
   protected readonly Math = Math;
+  protected readonly environment = environment;
 }
