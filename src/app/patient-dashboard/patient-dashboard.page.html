@@ -1,4 +1,12 @@
 <ion-content [fullscreen]="true">
+  <ion-content>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" (click)="logout()"><ion-icon name="log-out-outline"></ion-icon></ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
   <!-- Services Section -->
   <div class="logo-container">
     <img src="assets/icon/Docly.png" alt="Docly Logo" class="logo" />
@@ -62,4 +70,5 @@
       </div>
     </ng-template>
   </div>
+</ion-content>
 </ion-content>
