@@ -311,7 +311,7 @@
       </div>
 
       <ion-list>
-        <ion-item *ngFor="let patient of filteredPatients" detail="true" button (click)="viewPatientProfile(patient)">
+        <ion-item *ngFor="let patient of filteredPatients" detail="true" button (click)="selectPatient(patient)">
           <ion-avatar slot="start">
             <div class="avatar-placeholder">{{getInitials(patient.name)}}</div>
           </ion-avatar>
