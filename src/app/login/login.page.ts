@@ -24,9 +24,6 @@ import { NgIf } from '@angular/common';
   standalone: true,
   imports: [
     IonContent,
-    IonToolbar,
-    IonButtons,
-    IonBackButton,
     IonCard,
     IonCardContent,
     IonInput,

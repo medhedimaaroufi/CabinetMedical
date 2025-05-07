@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { authGuard} from "../guard/auth.guard";
 
 const routes: Routes = [
   {
@@ -31,17 +30,14 @@ const routes: Routes = [
   {
     path: 'patient',
     loadChildren: () => import('./patient-dashboard/patient-dashboard.module').then((m) => m.PatientDashboardPageModule),
-    canActivate: [authGuard] // Protect patient dashboard
   },
   {
     path: 'doctor',
     loadChildren: () => import('./doctor-dashboard/doctor-dashboard.module').then((m) => m.DoctorDashboardPageModule),
-    canActivate: [authGuard] // Protect doctor dashboard
   },
   {
     path: 'admin',
     loadChildren: () => import('./admin-dashboard/admin-dashboard.module').then((m) => m.AdminDashboardPageModule),
-    canActivate: [authGuard] // Protect admin dashboard
   },
   {
     path: 'patient-dashboard',
@@ -58,15 +54,6 @@ const routes: Routes = [
   {
     path: 'profile',
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
-  },
-  {
-    path: 'send-medical-docs',
-    loadChildren: () => import('./send-medical-docs/send-medical-docs.module').then( m => m.SendMedicalDocsPageModule),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'signin',
-    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'notification',
