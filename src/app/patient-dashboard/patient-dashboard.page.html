@@ -1,23 +1,13 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Dashboard</ion-title>
-    <ion-buttons slot="end">
-      <a href="/home?tab=profile">
-        <ion-button>
-          <ion-icon name="person-circle-outline"></ion-icon>
-        </ion-button>
-      </a>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
   <!-- Services Section -->
+  <div class="logo-container">
+    <img src="assets/icon/Docly.png" alt="Docly Logo" class="logo" />
+  </div>
   <div class="section-container">
     <div class="section-title">
       <ion-icon name="medkit-outline"></ion-icon>
       <span>Services</span>
-      <ion-button fill="clear" class="show-more" routerLink="/services">
+      <ion-button fill="clear" class="show-more" href="/home?tab=search">
         Show More
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-button>
@@ -45,14 +35,14 @@
     <div class="section-title">
       <ion-icon name="people-outline"></ion-icon>
       <span>Doctors</span>
-      <ion-button fill="clear" class="show-more" routerLink="/doctors">
+      <ion-button fill="clear" class="show-more" href="/home?tab=search">
         Show More
         <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
       </ion-button>
     </div>
 
     <ng-container *ngIf="doctors.length > 0; else noDoctors">
-      <ion-card *ngFor="let doctor of doctors" class="doctor-card" (click)="viewDoctorDetails(doctor)">
+      <ion-card *ngFor="let doctor of doctors" class="doctor-card" (click)="selectDoctor(doctor)">
         <ion-card-content>
           <ion-avatar slot="start">
             <div class="avatar-placeholder">{{ getInitials(doctor.name) }}</div>

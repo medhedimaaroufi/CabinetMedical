@@ -11,35 +11,38 @@
 
 <ion-content [fullscreen]="true">
   <div class="section-container">
-    <ng-container *ngIf="doctor; else loadingOrError">
+    <ng-container *ngIf="patient; else loadingOrError">
       <ion-card class="doctor-card">
         <ion-card-content>
           <div class="doctor-header">
             <ion-avatar>
-              <div class="avatar-placeholder">{{ getInitials(doctor.name) }}</div>
+              <div class="avatar-placeholder">{{ getInitials(patient.name) }}</div>
             </ion-avatar>
             <div class="doctor-info">
-              <h3>Dr. {{ doctor.name }}</h3>
-              <p>{{ doctor.speciality || 'No specialty' }}</p>
+              <h3>Dr. {{ patient.name }}</h3>
             </div>
           </div>
           <div class="doctor-details">
             <div class="detail-item">
               <ion-icon name="mail-outline"></ion-icon>
-              <span>{{ doctor.email }}</span>
+              <span>{{ patient.email }}</span>
             </div>
             <div class="detail-item">
               <ion-icon name="location-outline"></ion-icon>
-              <span>{{ doctor.address }}</span>
+              <span>{{ patient.address }}</span>
             </div>
             <div class="detail-item">
               <ion-icon name="call-outline"></ion-icon>
-              <span>{{ doctor.phone }}</span>
+              <span>{{ patient.phone }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ patient.dob }}</span>
             </div>
           </div>
-          <ion-button expand="block" color="primary" (click)="bookAppointment()">
-            Book Appointment
-            <ion-icon name="calendar-outline" slot="end"></ion-icon>
+          <ion-button expand="block" color="primary" href="{{environment.backendUrl+'/api/patient/get-document?pid='+patient._id}}'}">
+            Download Medical Document
+            <ion-icon name="download" slot="end"></ion-icon>
           </ion-button>
         </ion-card-content>
       </ion-card>

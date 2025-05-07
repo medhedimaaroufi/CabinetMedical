@@ -1,17 +1,4 @@
 <ion-content class="send-docs-container">
-  <ion-header>
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/home"></ion-back-button>
-      </ion-buttons>
-      <ion-title>Send Medical Documents</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div class="logo-container">
-    <img src="assets/icon/Docly.png" alt="Docly Logo" class="logo" />
-  </div>
-
   <ion-card class="send-docs-card">
     <ion-card-content>
       <form (submit)="uploadDocument($event)" (reset)="resetForm()">
