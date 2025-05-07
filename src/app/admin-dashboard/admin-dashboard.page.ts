@@ -171,7 +171,7 @@ export class AdminDashboardPage implements OnInit {
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/signin']);
+    window.location.reload();
   }
 
   filterDoctors() {
