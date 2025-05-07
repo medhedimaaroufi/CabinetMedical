@@ -9,6 +9,8 @@ import {Consultation} from "../../models/Consultation";
 import {ConsultationService} from "../../services/consultation/consultation.service";
 import {CalendarService} from "../../services/calendar/calendar.service";
 import {FormsModule} from "@angular/forms";
+import {environment} from "../../environments/environment";
+import {SendMedicalDocsPage} from "../send-medical-docs/send-medical-docs.page";
 import {PatientProfileModalComponent} from "./patient-profile-modal/patient-profile-modal.component";
 import {Doctor} from "../../models/Doctor";
 import {Patient} from "../../models/Patient";
@@ -23,7 +25,8 @@ import {Patient} from "../../models/Patient";
     NgIf,
     NgForOf,
     NgClass,
-    FormsModule
+    FormsModule,
+    SendMedicalDocsPage
   ]
 })
 export class ProfilePage implements OnInit {
@@ -84,6 +87,7 @@ export class ProfilePage implements OnInit {
       { name: 'New Patient', percentage: 40, startAngle: 216, endAngle: 360, color: '#2196F3' }
     ]
   };
+  patient_id: string = localStorage.getItem("id") || '';
 
   constructor(
     private userService: UserService,
@@ -544,7 +548,7 @@ export class ProfilePage implements OnInit {
   }
 
   protected readonly Math = Math;
-
+  protected readonly environment = environment;
   async selectPatient(patient: Patient) {
     console.log('Patient ID:', patient._id, 'Type:', typeof patient._id);
     const modalOptions = {
