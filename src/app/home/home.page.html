@@ -6,7 +6,8 @@
   </ion-tab>
   <ion-tab tab="appointments">
     <div id="appointments-page" class="content">
-      <app-appointments></app-appointments>
+      <app-appointments *ngIf="role === 'doctor'"></app-appointments>
+      <app-appointments-patients *ngIf="role === 'patient'"></app-appointments-patients>
     </div>
   </ion-tab>
   <ion-tab tab="search">

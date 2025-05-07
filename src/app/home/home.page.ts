@@ -25,6 +25,7 @@ import { SearchPage } from '../search/search.page';
 import { PatientDashboardPage } from '../patient-dashboard/patient-dashboard.page';
 import { AppointmentsPage } from '../appointments/appointments.page';
 import { NgIf } from '@angular/common';
+import {AppointmentsPatientsPage} from "../appointments-patients/appointments-patients.page";
 
 @Component({
   selector: 'app-home',
@@ -42,6 +43,8 @@ import { NgIf } from '@angular/common';
     SearchPage,
     PatientDashboardPage,
     AppointmentsPage,
+    NgIf,
+    AppointmentsPatientsPage,
   ],
   standalone: true
 })
@@ -50,6 +53,7 @@ export class HomePage implements OnInit {
   public tabs = ['home', 'appointments', 'search', 'notification', 'profile'];
   public activeTab = this.tabs[0];
   public requestedTab = '';
+  role: string = localStorage.getItem('role') || '';
 
   constructor() {
     addIcons({
