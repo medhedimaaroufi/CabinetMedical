@@ -86,7 +86,7 @@ export class SignupDoctorPage {
       .subscribe(
         (response: any) => {
           console.log('Signup Success:', response);
-          this.router.navigate(['/']);
+          this.router.navigate(['/home']);
         },
         (error) => {
           console.error('Signup Error:', error);
