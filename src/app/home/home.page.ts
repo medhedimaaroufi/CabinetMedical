@@ -49,8 +49,6 @@ import {LoginPage} from "../login/login.page";
     AppointmentsPage,
     NgIf,
     AppointmentsPatientsPage,
-    IonImg,
-    DoctorDashboardPage,
     AdminDashboardPage,
     NgIf,
     LoginPage,

@@ -2,7 +2,7 @@
   <ion-tab tab="home">
     <div id="home-page" class="content">
       <app-patient-dashboard *ngIf="role === 'patient'"></app-patient-dashboard>
-      <app-doctor-dashboard *ngIf="role === 'doctor'"></app-doctor-dashboard>
+      <app-patient-dashboard *ngIf="role === 'doctor'"></app-patient-dashboard>
       <app-admin-dashboard *ngIf="role === 'admin'"></app-admin-dashboard>
     </div>
   </ion-tab>

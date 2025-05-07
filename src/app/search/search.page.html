@@ -34,7 +34,7 @@
         <ion-card-title class="font-bold">{{ service }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <p class="text-gray-600">Number of doctors: {{ doctorsByService[service]?.length || 0 }}</p>
+        <p class="text-gray-600">Number of doctors: {{ doctorsByService[service].length || 0 }}</p>
       </ion-card-content>
     </ion-card>
     <ion-card *ngIf="filteredServices.length === 0" class="no-data-card">
