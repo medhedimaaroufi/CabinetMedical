@@ -1,11 +1,14 @@
 <ion-tabs #tabs>
   <ion-tab tab="home">
     <div id="home-page" class="content">
-      <app-patient-dashboard></app-patient-dashboard>
+      <app-patient-dashboard *ngIf="role === 'patient'"></app-patient-dashboard>
+      <app-doctor-dashboard *ngIf="role === 'doctor'"></app-doctor-dashboard>
+      <app-admin-dashboard *ngIf="role === 'admin'"></app-admin-dashboard>
     </div>
   </ion-tab>
   <ion-tab tab="appointments">
     <div id="appointments-page" class="content">
+      <app-login *ngIf="!loggedIn"></app-login>
       <app-appointments *ngIf="role === 'doctor'"></app-appointments>
       <app-appointments-patients *ngIf="role === 'patient'"></app-appointments-patients>
     </div>
@@ -17,12 +20,14 @@
   </ion-tab>
   <ion-tab tab="notification">
     <div id="notification-page" class="content">
-      <app-notification></app-notification>
+      <app-login *ngIf="!loggedIn"></app-login>
+      <app-notification *ngIf="loggedIn"></app-notification>
     </div>
   </ion-tab>
   <ion-tab tab="profile">
     <div id="profile-page" class="content">
-      <app-profile></app-profile>
+      <app-login *ngIf="!loggedIn"></app-login>
+      <app-profile *ngIf="loggedIn"></app-profile>
     </div>
   </ion-tab>
 
@@ -32,7 +37,7 @@
       <ion-label>Home</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="appointments">
+    <ion-tab-button tab="appointments" *ngIf="loggedIn">
       <ion-icon name="calendar-outline"></ion-icon>
       <ion-label>Appointments</ion-label>
     </ion-tab-button>
@@ -42,14 +47,19 @@
       <ion-label>Search</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="notification">
+    <ion-tab-button tab="notification" *ngIf="loggedIn">
       <ion-icon name="notifications-outline"></ion-icon>
       <ion-label>Notification</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="profile">
+    <ion-tab-button tab="profile" *ngIf="loggedIn">
       <ion-icon name="person-outline"></ion-icon>
       <ion-label>Profile</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="profile" *ngIf="!loggedIn">
+      <ion-icon name="person-outline"></ion-icon>
+      <ion-label>Login</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

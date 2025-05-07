@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {IonicModule, ModalController, NavController} from '@ionic/angular';
+import { IonicModule, ModalController, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { DoctorService } from '../../../services/doctor/doctor.service';
 
 interface Doctor {
   id: string;
@@ -17,10 +16,7 @@ interface Doctor {
   selector: 'app-doctor-profile-modal',
   templateUrl: './doctor-profile-modal.component.html',
   styleUrls: ['./doctor-profile-modal.component.scss'],
-  imports: [
-    IonicModule,
-    CommonModule
-  ],
+  imports: [IonicModule, CommonModule],
   standalone: true
 })
 export class DoctorProfileModalComponent implements OnInit {
@@ -29,7 +25,7 @@ export class DoctorProfileModalComponent implements OnInit {
   error: string | null = null;
 
   constructor(
-    private http: HttpClient,
+    private doctorService: DoctorService,
     private modalController: ModalController,
     private navController: NavController
   ) {}
@@ -43,8 +39,7 @@ export class DoctorProfileModalComponent implements OnInit {
   }
 
   loadDoctor(id: string) {
-    const url = `${environment.backendUrl}/api/search/doctors/${id}`;
-    this.http.get<Doctor>(url).subscribe({
+    this.doctorService.getDoctorById(id).subscribe({
       next: (doctor) => {
         this.doctor = doctor;
         this.error = null;
@@ -57,15 +52,19 @@ export class DoctorProfileModalComponent implements OnInit {
     });
   }
 
-  close() {
-    this.modalController.dismiss();
+  getInitials(name: string): string {
+    return name.split(' ').map(word => word[0]).slice(0, 2).join('').toUpperCase();
+  }
+
+  async close() {
+    await this.modalController.dismiss();
   }
 
   async bookAppointment() {
     if (this.doctor) {
       await this.modalController.dismiss();
-      await this.navController.navigateForward(`/appointments`, {
-        queryParams: {doctorId: this.doctor.id}
+      await this.navController.navigateForward('/appointments', {
+        queryParams: { doctorId: this.doctor.id }
       });
     }
   }

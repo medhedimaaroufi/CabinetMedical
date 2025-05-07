@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   IonContent,
   IonHeader,
-  IonIcon,
+  IonIcon, IonImg,
   IonLabel,
   IonTab,
   IonTabBar,
@@ -26,6 +26,10 @@ import { PatientDashboardPage } from '../patient-dashboard/patient-dashboard.pag
 import { AppointmentsPage } from '../appointments/appointments.page';
 import { NgIf } from '@angular/common';
 import {AppointmentsPatientsPage} from "../appointments-patients/appointments-patients.page";
+import {DoctorDashboardPage} from "../doctor-dashboard/doctor-dashboard.page";
+import {AdminDashboardPage} from "../admin-dashboard/admin-dashboard.page";
+import {CookieService} from "ngx-cookie-service";
+import {LoginPage} from "../login/login.page";
 
 @Component({
   selector: 'app-home',
@@ -45,6 +49,11 @@ import {AppointmentsPatientsPage} from "../appointments-patients/appointments-pa
     AppointmentsPage,
     NgIf,
     AppointmentsPatientsPage,
+    IonImg,
+    DoctorDashboardPage,
+    AdminDashboardPage,
+    NgIf,
+    LoginPage,
   ],
   standalone: true
 })
@@ -53,9 +62,10 @@ export class HomePage implements OnInit {
   public tabs = ['home', 'appointments', 'search', 'notification', 'profile'];
   public activeTab = this.tabs[0];
   public requestedTab = '';
-  role: string = localStorage.getItem('role') || '';
+  role: string = 'patient';
+  loggedIn: boolean = false;
 
-  constructor() {
+  constructor(private cookieService: CookieService) {
     addIcons({
       'home-outline': homeOutline,
       'calendar-outline': calendarOutline,
@@ -66,6 +76,8 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
+    this.role = localStorage.getItem('role') || 'patient';
+    this.loggedIn = this.cookieService.check('token');
     const urlParams = new URLSearchParams(window.location.search);
     this.requestedTab = urlParams.get('tab') || '';
     if (this.tabs.includes(this.requestedTab)) {

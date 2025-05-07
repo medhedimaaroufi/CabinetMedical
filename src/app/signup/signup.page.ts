@@ -22,7 +22,8 @@ import {FormsModule} from "@angular/forms";
     IonButtons,
     IonBackButton,
     RouterLink
-  ]
+  ],
+  standalone: true
 })
 
 export class SignupPage {
