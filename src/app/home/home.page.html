@@ -1,15 +1,15 @@
 <ion-tabs #tabs>
   <ion-tab tab="home">
     <div id="home-page" class="content">
-      <app-patient-dashboard *ngIf="role === 'patient'"></app-patient-dashboard>
-      <app-doctor-dashboard *ngIf="role === 'doctor'"></app-doctor-dashboard>
+      <app-patient-dashboard *ngIf="role === 'patient' || role === 'doctor'"></app-patient-dashboard>
       <app-admin-dashboard *ngIf="role === 'admin'"></app-admin-dashboard>
     </div>
   </ion-tab>
   <ion-tab tab="appointments">
     <div id="appointments-page" class="content">
       <app-login *ngIf="!loggedIn"></app-login>
-      <app-appointments *ngIf="loggedIn"></app-appointments>
+      <app-appointments *ngIf="role === 'doctor'"></app-appointments>
+      <app-appointments-patients *ngIf="role === 'patient'"></app-appointments-patients>
     </div>
   </ion-tab>
   <ion-tab tab="search">
@@ -36,7 +36,7 @@
       <ion-label>Home</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="appointments" *ngIf="loggedIn">
+    <ion-tab-button tab="appointments" *ngIf="loggedIn && !(role === 'admin')">
       <ion-icon name="calendar-outline"></ion-icon>
       <ion-label>Appointments</ion-label>
     </ion-tab-button>
@@ -46,7 +46,7 @@
       <ion-label>Search</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="notification" *ngIf="loggedIn">
+    <ion-tab-button tab="notification" *ngIf="loggedIn && !(role === 'admin')">
       <ion-icon name="notifications-outline"></ion-icon>
       <ion-label>Notification</ion-label>
     </ion-tab-button>

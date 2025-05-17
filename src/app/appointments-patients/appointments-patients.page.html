@@ -1,0 +1,98 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Appointments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="content-container">
+    <!-- Booking Form -->
+    <div class="section-title">
+      <ion-icon name="calendar-outline" aria-label="Book Appointment"></ion-icon>
+      <span>Book an Appointment</span>
+    </div>
+    <ion-card class="booking-card">
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="floating"></ion-label>
+          <ion-select [(ngModel)]="selectedService" (ionChange)="onServiceChange($event)" placeholder="Select a service">
+            <ion-select-option *ngFor="let service of services" [value]="service">{{ service }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating"></ion-label>
+          <ion-select [(ngModel)]="selectedDoctorId" placeholder="Select a doctor" [disabled]="!selectedService">
+            <ion-select-option *ngFor="let doctor of doctors" [value]="doctor.id">{{ doctor.name }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Date</ion-label>
+          <ion-input type="date" [(ngModel)]="appointmentDate" aria-label="Appointment date"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Time</ion-label>
+          <ion-input type="time" [(ngModel)]="appointmentTime" aria-label="Appointment time"></ion-input>
+        </ion-item>
+        <div class="form-actions">
+          <ion-button
+            expand="block"
+            color="primary"
+            (click)="bookAppointment()"
+            [disabled]="!selectedService || !selectedDoctorId || !appointmentDate || !appointmentTime">
+            Schedule Appointment
+          </ion-button>
+        </div>
+        <div class="error-container" *ngIf="errorMessage">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>{{ errorMessage }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Appointments List -->
+    <div class="section-title">
+      <ion-icon name="calendar-outline" aria-label="Your Appointments"></ion-icon>
+      <span>Your Appointments</span>
+    </div>
+    <ng-container *ngIf="appointments && appointments.length > 0; else noAppointments">
+      <ion-card *ngFor="let appointment of appointments; trackBy: trackById" class="appointment-card">
+        <ion-card-content>
+          <div class="card-header">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span class="appointment-title">Appointment #{{ appointment.id }}</span>
+            <div class="appointment-time">{{ formatTime(appointment.dateTime) }}</div>
+          </div>
+          <div class="card-details">
+            <p class="appointment-detail"><strong>Doctor:</strong> {{ getDoctorName(appointment.doctor_id) }}</p>
+            <p class="appointment-detail"><strong>Status:</strong> {{ appointment.status }}</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+
+    <!-- Empty State -->
+    <ng-template #noAppointments>
+      <div class="empty-state" *ngIf="!isLoading">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <p>No appointments scheduled yet.</p>
+        <p>Book an appointment above to see it listed here.</p>
+      </div>
+    </ng-template>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <ion-spinner color="primary"></ion-spinner>
+      <p>Loading appointments...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="errorMessage && !isLoading && appointments.length === 0">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <p>{{ errorMessage }}</p>
+      <ion-button fill="outline" size="small">
+        Retry
+        <ion-icon name="refresh-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { authGuard} from "../guard/auth.guard";
 
 const routes: Routes = [
   {
@@ -31,17 +30,14 @@ const routes: Routes = [
   {
     path: 'patient',
     loadChildren: () => import('./patient-dashboard/patient-dashboard.module').then((m) => m.PatientDashboardPageModule),
-    canActivate: [authGuard] // Protect patient dashboard
   },
   {
     path: 'doctor',
     loadChildren: () => import('./doctor-dashboard/doctor-dashboard.module').then((m) => m.DoctorDashboardPageModule),
-    canActivate: [authGuard] // Protect doctor dashboard
   },
   {
     path: 'admin',
     loadChildren: () => import('./admin-dashboard/admin-dashboard.module').then((m) => m.AdminDashboardPageModule),
-    canActivate: [authGuard] // Protect admin dashboard
   },
   {
     path: 'patient-dashboard',
@@ -60,24 +56,20 @@ const routes: Routes = [
     loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
   },
   {
-    path: 'send-medical-docs',
-    loadChildren: () => import('./send-medical-docs/send-medical-docs.module').then( m => m.SendMedicalDocsPageModule),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'signin',
-    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
-  },
-  {
     path: 'notification',
     loadChildren: () => import('./notification/notification.module').then( m => m.NotificationPageModule)
   },
   {
     path: 'search',
     loadChildren: () => import('./search/search.module').then( m => m.SearchPageModule)
-  },  {
+  },
+  {
     path: 'appointments',
     loadChildren: () => import('./appointments/appointments.module').then( m => m.AppointmentsPageModule)
+  },
+  {
+    path: 'appointments-patients',
+    loadChildren: () => import('./appointments-patients/appointments-patients.module').then( m => m.AppointmentsPatientsPageModule)
   }
 
 ];

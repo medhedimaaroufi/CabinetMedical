@@ -99,7 +99,7 @@ export class SignupPatientPage {
         (response: any) => {
           console.log('Signup Success:', response);
           this.authService.logTokenFromCookie();
-          this.router.navigate(['/']);  // Navigate to home or dashboard
+          this.router.navigate(['/home']);  // Navigate to home or dashboard
         },
         (error: any) => {
           console.error('Signup Error:', error);

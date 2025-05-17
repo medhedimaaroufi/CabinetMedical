@@ -30,9 +30,6 @@ import {NgForOf, NgIf} from "@angular/common";
   templateUrl: './send-medical-docs.page.html',
   styleUrls: ['./send-medical-docs.page.scss'],
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonCard,
     IonCardContent,
@@ -43,9 +40,7 @@ import {NgForOf, NgIf} from "@angular/common";
     IonSelectOption,
     FormsModule,
     IonButton,
-    IonButtons,
     IonText,
-    IonBackButton,
     IonSpinner,
     NgForOf,
     NgIf

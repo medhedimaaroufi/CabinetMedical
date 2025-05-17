@@ -40,7 +40,7 @@
               <span>{{ patient.dob }}</span>
             </div>
           </div>
-          <ion-button expand="block" color="primary" href="{{environment.backendUrl+'/api/patient/get-document?pid='+patient._id}}'}">
+          <ion-button expand="block" color="primary" href="{{environment.backendUrl+'/api/patient/get-document?id='+patient._id}}">
             Download Medical Document
             <ion-icon name="download" slot="end"></ion-icon>
           </ion-button>
